@@ -1,0 +1,16 @@
+import styles from './upload-page.module.css';
+import LogoWhite from '../img/PB-white.svg';
+import UploadPageNav from './UploadPageNav';
+import UploadSection from './UploadSection';
+
+export function UploadPage() {
+    return <div id={styles.uploadPage} className="py-4">
+        <UploadPageNav/>
+        <p className="container text-white fw-bold fs-3 lh-1 my-5">
+            Analyze ESG documents should be like making an apple pie 🥧
+            -- it should be easy.
+        </p>
+        <UploadSection/>
+        <footer className="text-center text-white mt-5">Powered by Team Pacific Blue</footer>
+    </div>
+}

@@ -1,0 +1,52 @@
+div.uploadToolWrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0;
+}
+
+div.uploadToolWrapper > label {
+    display: flex;
+    flex: 1 1;
+}
+
+
+div.uploadSection {
+    width: 100%;
+    border: 0.1rem solid white;
+    color: white;
+    border-radius: 2.5rem;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: row;
+}
+
+div.addFile {
+    background-color: white;
+    user-select: none;
+    border-radius: 2rem;
+    color: #15216b;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+div.addFile:hover {
+    background-color: #e2ebf7;
+}
+
+div.folderLogo {
+    border-radius: 50%;
+    padding: 1rem;
+    box-shadow: 0 1px 1.25rem rgba(0, 0, 0, 0.1);
+    background-color: white;
+    transition: background-color 0.2s;
+}
+
+div.addFile:hover > div.folderLogo {
+    background-color: #eaf0f8;
+}

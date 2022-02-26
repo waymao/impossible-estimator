@@ -1,0 +1,11 @@
+div#uploadPage {
+    background-color: #458fef;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+}
+
+img.logo {
+    width: 4rem;
+}
