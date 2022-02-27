@@ -3,7 +3,6 @@ import section_styles from './upload-section.module.css';
 import FolderIcon from '../img/file-upload-icon.svg';
 import { ReactComponent as DeleteIcon } from '../img/delete-x-icon.svg';
 import { Button } from 'react-bootstrap'
-import React from 'react';
 
 function FileItem({ file, deleteFile }: {file: File, deleteFile: (file: File) => void}) {
     return <div className={styles.oneFile}>
@@ -27,10 +26,11 @@ export function UploadFileList({ file_list, handleDeleteFile, openFileDialogue }
     return <div className={section_styles.mainUploadBox + " " + styles.uploadFileListPanel}>
         <h4 className="fs-5 d-flex flex-row align-items-center">
             <img src={FolderIcon} alt="folder icon" style={{width: "1.5rem"}}/>
-            <span className="mx-2 fw-bold">Preview before uploading</span>
+            <span className="mx-2 fw-bold">{file_list.size === 1 ? "File Selected" : "Files Selected"}</span>
             <Button 
                 className={styles.secondaryButton + " ms-auto addmore-btn " + styles.uploadButton}
                 variant="light"
+                onClick={openFileDialogue}
             >
                 Add more
             </Button>

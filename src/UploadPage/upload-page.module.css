@@ -3,7 +3,7 @@ div#uploadPage {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 img.logo {

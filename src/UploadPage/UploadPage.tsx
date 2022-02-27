@@ -1,5 +1,4 @@
 import styles from './upload-page.module.css';
-import LogoWhite from '../img/PB-white.svg';
 import UploadPageNav from './UploadPageNav';
 import UploadSection from './UploadSection';
 

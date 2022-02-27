@@ -4,19 +4,9 @@ div.uploadToolWrapper {
     flex: 1 0;
 }
 
-div.uploadToolWrapper > label {
-    display: flex;
-    flex: 1 1;
+.cursorDefault {
+    cursor: default;
 }
-
-div.uploadToolWrapper > label > div {
-    border-radius: 2.5rem;
-}
-
-div.uploadToolWrapper > label > div > span {
-    display: none
-}
-
 
 div.uploadSectionBorder {
     width: 100%;
@@ -60,4 +50,19 @@ div.addFile > div.folderLogo {
 
 div.addFile:hover > div.folderLogo {
     background-color: #eaf0f8;
+}
+
+div.dropLayOver {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #aaaaaa50;
+    border-radius: 2.5rem;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #333;
+    font-size: 2rem;
+    font-weight: bold;
 }
