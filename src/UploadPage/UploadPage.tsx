@@ -6,7 +6,7 @@ export function UploadPage() {
     return <div id={styles.uploadPage} className="py-4">
         <UploadPageNav/>
         <p className="container text-white fw-bold fs-3 lh-1 my-5">
-            Analyze ESG documents should be like making an apple pie 🥧
+            🧐 Analyzing ESG 📄 should be like making an 🥧
             -- it should be easy.
         </p>
         <UploadSection/>

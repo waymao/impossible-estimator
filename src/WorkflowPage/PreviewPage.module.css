@@ -1,0 +1,15 @@
+.previewPageBoard {
+    display: flex;
+    flex: 1 1;
+    flex-direction: row;
+}
+
+.previewPageBoard > :not(:last-child) {
+    margin-right: 1rem;
+}
+
+.previewPageBoard > .ListPanel {
+    background: #FFFFFF;
+    padding: 1rem;
+    border-radius: 15px;
+}
