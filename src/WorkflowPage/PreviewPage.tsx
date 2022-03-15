@@ -1,4 +1,5 @@
 import styles from './PreviewPage.module.css';
+import PDFViewer from '../UploadPage/PDFViewer';
 
 export function PreviewPage() {
     return <div className={styles.previewPageBoard}>
@@ -6,7 +7,7 @@ export function PreviewPage() {
             google_2021_diversity_annual_report
         </div>
         <div>
-            pdf.js
+            <PDFViewer url="/google_2021_diversity_annual_report.pdf"/>
         </div>
     </div>;
 }
