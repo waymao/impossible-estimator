@@ -25,7 +25,7 @@ export default function WorkflowPage() {
         </Nav>
         <Container className="mt-3 mb-5 flex-grow-1 d-flex">
             <Routes>
-                <Route path='/analyze' element={<PreviewPage />}/>
+                <Route path='/analyze/:filename' element={<PreviewPage />}/>
             </Routes>
         </Container>
     </div>;
