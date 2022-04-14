@@ -5,6 +5,10 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
+import {
+  TransitionGroup,
+  CSSTransition
+} from "react-transition-group";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { UploadPage } from './UploadPage/UploadPage';

@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 import styles from './workflow-page.module.css';
 import { Container, Nav } from 'react-bootstrap';
-import { PreviewPage } from './PreviewPage';
+import { PreviewPage } from './preview-page/PreviewPage';
 
 export default function WorkflowPage() {
     return <div className={styles.workflowPage}>
@@ -25,7 +25,8 @@ export default function WorkflowPage() {
         </Nav>
         <Container className="mt-3 mb-5 flex-grow-1 d-flex">
             <Routes>
-                <Route path='/analyze/:filename' element={<PreviewPage />}/>
+                <Route path='/analyze/:file_id' element={<PreviewPage />}/>
+                <Route path='/upload/' element={<PreviewPage />}/>
             </Routes>
         </Container>
     </div>;
