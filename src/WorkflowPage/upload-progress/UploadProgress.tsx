@@ -1,10 +1,13 @@
-import { FileUploadInfo } from "../files";
+import { Button } from "react-bootstrap";
+import { FileUploadInfo, useFileUpload } from "../files";
 import styles from './upload-progress.module.css';
 
-export default function UploadProgress({info}: {info: FileUploadInfo}) {
+export default function UploadProgress({file}: {file: File}) {
+    const [upload_progress, beginUpload] = useFileUpload(file);
     return <div className={styles.uploadProgress}>
-        <span>{info.file.name}</span>
-        <span>{info.file.size}</span>
-        <span>{`${info.upload_progress * 100}%`}</span>
+        <span>{file.name}</span>
+        <span>{file.size}</span>
+        <span>{`${upload_progress * 100}%`}</span>
+        <span><Button onClick={beginUpload}>Upload</Button></span>
     </div>
 }
