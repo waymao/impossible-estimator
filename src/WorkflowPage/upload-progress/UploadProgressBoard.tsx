@@ -6,10 +6,21 @@ import { FileUploadInfo } from '../files';
 import UploadProgress from './UploadProgress';
 
 export default function UploadProgressBoard() {
-    const { fileList } = useLocation().state as {fileList: FileUploadInfo[]};
+    const {state } = useLocation();
+    console.log(state);
+    if(!state) {
+        return <div>ASDF</div>
+    }
+    const { files } = state as {files: File[]};
+    if(files) {
+        return <div>
+        {files.map(
+            (file: File) => <UploadProgress file={file}/>)}
+        </div>
+    }else {
+        return <div>
+            no
+        </div>
+    }
 
-    return <div>
-        {fileList.map(
-            (file: FileUploadInfo) => <UploadProgress info={file}/>)}
-    </div>
 }

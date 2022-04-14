@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { API_HOST } from '../config';
-import { FILE_HOST } from '../config'
+import { FILE_HOST } from '../config';
+import { getCookieByName } from '../UploadPage/csrf';
 
 const FILE_STATIC_PATH = "/uploads/"
 const FILE_INFO_PATH = "/file/all"
-const FILE_UPLOAD_PATH = "/extract/extract"
+const FILE_UPLOAD_PATH = API_HOST + "/file/upload"
 const EXTRACT_EXTRACT_PATH = "/transform/"
 // TODO changeme??
 
@@ -43,6 +44,7 @@ export function useFileUpload(file: File) {
     const beginUpload = () => {
         const filename = file.name;
         const data = new FormData();
+        const csrftoken = getCookieByName('csrftoken');
         data.append('file', file);
         data.append('filename', filename);
         const xhr = new XMLHttpRequest();
@@ -70,12 +72,13 @@ export function useFileUpload(file: File) {
                 }
             });
             xhr.open("POST", FILE_UPLOAD_PATH, true);
-            xhr.setRequestHeader("Content-Type", "multipart/form-data");
+            xhr.withCredentials = true;
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
             xhr.send(data);
         });
     };
 
-    return [ upload_progress, beginUpload ];
+    return [ upload_progress, beginUpload ] as [number, () => Promise<void>];
 }
 
 export interface FileUploadInfo {
