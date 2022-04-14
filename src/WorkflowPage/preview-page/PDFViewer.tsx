@@ -6,10 +6,10 @@ import { Button } from 'react-bootstrap';
 import { ProcessedDataPoint } from '../datapoints';
 
 export interface BoxToDraw {
-    left: number,
-    top: number,
-    width: number,
-    height: number,
+    x1: number,
+    x2: number,
+    y1: number,
+    y2: number,
     color?: string,
     onClick?: () => void,
     href?: string,
@@ -26,7 +26,7 @@ export interface Props {
     reportChangePage?: (a: number) => void
 }
 
-export default function PDFViewer({url, page, boxes_to_draw}: Props){
+export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: Props){
     const canvasRef = useRef<HTMLCanvasElement>(null);
     pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
     console.log(boxes_to_draw);
@@ -37,6 +37,7 @@ export default function PDFViewer({url, page, boxes_to_draw}: Props){
     const [currentPage, setCurrentPage] = useState(1);
     // size of the canvas
     const [canvas_size, setCanvasSize] = useState<[number, number]>([0, 0]);
+    const [viewport_s, setViewPort] = useState<pdfjsLib.PageViewport>();
 
     const renderPage = useCallback((pageNum, pdf=pdfRef) => {
         pdf && pdf.getPage(pageNum).then((page: PDFPageProxy) => {
@@ -55,6 +56,7 @@ export default function PDFViewer({url, page, boxes_to_draw}: Props){
                     canvasContext: context,
                     viewport: viewport
                 };
+                setViewPort(viewport);
                 page.render(renderContext);
             }
         }
@@ -75,14 +77,18 @@ export default function PDFViewer({url, page, boxes_to_draw}: Props){
     }, [url]);
 
     const boxes = React.useMemo(() => {
+        if (!viewport_s) return [];
         return boxes_to_draw.map((box: BoxToDraw) => {
+            console.log(box);
+            const rect = viewport_s.convertToViewportRectangle([box.x1, box.y2, box.x2, box.y1]) as number[];
+            console.log(rect);
             return <div 
                 style={{
-                    left: box.left / canvas_size[0] * 100 + '%',
-                    bottom: box.top / canvas_size[0] * 100 + '%', // TODO change coord
-                    width: box.width / canvas_size[0] * 100 + '%',
-                    height: box.height / canvas_size[0] * 100 + '%',
-                    border: "2px solid " + box.color ?? "black",
+                    left: rect[0] / viewport_s.width * 100 + '%',
+                    top: rect[1] / viewport_s.height * 98.5 + '%', // TODO change coord
+                    width: (rect[2] - rect[0]) / viewport_s.width * 100 + '%',
+                    height: (rect[3] - rect[1]) / viewport_s.height * 100 + '%',
+                    border: "1px solid " + box.color ?? "black",
                     position: "absolute",
                     ...box.style
                 }}
@@ -98,9 +104,21 @@ export default function PDFViewer({url, page, boxes_to_draw}: Props){
         }
     }, [page]);
 
-    const nextPage = () => pdfRef && currentPage < pdfRef.numPages && setCurrentPage(currentPage + 1);
+    const nextPage = () => {
+        if (pdfRef && currentPage < pdfRef.numPages) {
+            const newpage = currentPage + 1;
+            setCurrentPage(newpage);
+            reportChangePage?.(newpage);
+        }
+    }
 
-    const prevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+    const prevPage = () => {
+        if (pdfRef && currentPage > 0) {
+            const newpage = currentPage - 1;
+            setCurrentPage(newpage);
+            reportChangePage?.(newpage);
+        }
+    }
 
     return <div>
         <div className="canvas1 position-relative">
