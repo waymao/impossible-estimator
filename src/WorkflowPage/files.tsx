@@ -10,6 +10,7 @@ const EXTRACT_EXTRACT_PATH = "/transform/"
 // TODO changeme??
 
 export interface FileInfo {
+    id: number,
     name: string,
     path: string,
     hash: string
@@ -26,6 +27,15 @@ export async function getFileInfo(id: string | number): Promise<FileInfo | null>
     info.path = API_HOST + FILE_STATIC_PATH + info.path;
     console.log(info);
     return info;
+}
+
+export async function getFilesInfo(): Promise<Array<FileInfo> | null> {
+    const res = await fetch(API_HOST + FILE_INFO_PATH);
+    const results: FileInfo[] = await res.json();
+    if (results.length <= 0) {
+        return null;
+    }
+    return results;
 }
 
 /* useFileUpload
