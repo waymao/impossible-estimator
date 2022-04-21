@@ -3,12 +3,13 @@ import styles from './files-section.module.css';
 import React, { useEffect } from "react";
 import { FileInfo, getFilesInfo } from "../files";
 import { Link } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 
 function FileItem({info}: {info: FileInfo}) {
   return <div className={list_styles.oneFile}>
     <span>{info.name}</span>
     <Link to={"/process/analyze/" + info.id} className={styles.removeStyle + " ms-auto " + styles.icoButton}>
-      <button> Process </button>
+      <Button> Process </Button>
     </Link>
   </div>
 }
