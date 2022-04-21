@@ -19,7 +19,6 @@ export function PreviewPage() {
     const [page, setPage] = React.useState<number>(1);
 
     useEffect(() => {
-        console.log(file_id);
         if (file_id === undefined) return;
         getFileInfo(file_id).then(setFileInfo);
         getExtractedDataPoint(file_id).then(setRawData);
@@ -37,7 +36,6 @@ export function PreviewPage() {
     }, [data]);
 
     const boxes_data: BoxToDraw[] = React.useMemo(() => {
-        console.log("changed");
         // returns processed data or raw data based on user selection
         if (mode === 'processed') {
             return data?.processed_datas.flatMap(item => ([{
@@ -61,7 +59,8 @@ export function PreviewPage() {
                         y1: item.coord[1],
                         x2: item.coord[2],
                         y2: item.coord[3], 
-                        color: 'blue'
+                        color: 'blue',
+                        onClick: () => {console.log(item.content);}
             })) ?? [];
         }
         // TODO fixme

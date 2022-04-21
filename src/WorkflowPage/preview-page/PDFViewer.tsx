@@ -15,6 +15,7 @@ export interface BoxToDraw {
     href?: string,
     className?: string,
     style?: React.CSSProperties
+    children?: React.ReactNode
 }
 
 const PDF_DRAW_SCALE = 2
@@ -29,7 +30,7 @@ export interface Props {
 export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: Props){
     const canvasRef = useRef<HTMLCanvasElement>(null);
     pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
-    console.log(boxes_to_draw);
+    // console.log(boxes_to_draw);
 
     // pdf.js document
     const [pdfRef, setPdfRef] = useState<PDFDocumentProxy>();
@@ -79,9 +80,9 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
     const boxes = React.useMemo(() => {
         if (!viewport_s) return [];
         return boxes_to_draw.map((box: BoxToDraw) => {
-            console.log(box);
+            // console.log(box);
             const rect = viewport_s.convertToViewportRectangle([box.x1, box.y2, box.x2, box.y1]) as number[];
-            console.log(rect);
+            // console.log(rect);
             return <div 
                 style={{
                     left: rect[0] / viewport_s.width * 100 + '%',
@@ -90,10 +91,12 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
                     height: (rect[3] - rect[1]) / viewport_s.height * 100 + '%',
                     border: "1px solid " + box.color ?? "black",
                     position: "absolute",
+                    cursor: "pointer",
                     ...box.style
                 }}
                 onClick={box.onClick}
             >
+                {box.children}
             </div>}
         )}, [boxes_to_draw, canvas_size]);
 
