@@ -7,6 +7,7 @@ import { Container, Nav } from 'react-bootstrap';
 import { PreviewPage } from './preview-page/PreviewPage';
 import UploadProgressBoard from "./upload-progress/UploadProgressBoard";
 import { FilesPage } from "./files-page/FilesPage";
+import { DownloadPage } from "./download-page/DownloadPage";
 
 export default function WorkflowPage() {
     return <div className={styles.workflowPage}>
@@ -24,7 +25,7 @@ export default function WorkflowPage() {
                 <Nav.Link href="/process">Analyze</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link>Download</Nav.Link>
+                <Nav.Link href="/process/download">Download</Nav.Link>
             </Nav.Item>
         </Nav>
         <Container className="mt-3 mb-5 flex-grow-1 d-flex">
@@ -32,6 +33,7 @@ export default function WorkflowPage() {
                 <Route path='/analyze/:file_id' element={<PreviewPage />}/>
                 <Route path='/upload/' element={<UploadProgressBoard />}/>
                 <Route path='/files/' element={<FilesPage/>}/>
+                <Route path='/download/' element={<DownloadPage/>}/>
             </Routes>
         </Container>
     </div>;

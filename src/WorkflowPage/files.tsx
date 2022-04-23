@@ -52,6 +52,7 @@ export function useFileListUpload(files: File[]): [number, number[], () => Promi
         }
         const updateProgressForFile = (progress: number) => {
             upload_progress[file_index] = progress;
+            console.log(progress);
             setUploadProgress(upload_progress);
         }
         const reportErrorForFile = (error: any) => {
