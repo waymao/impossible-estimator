@@ -38,6 +38,49 @@ export async function getFilesInfo(): Promise<Array<FileInfo> | null> {
     return results;
 }
 
+export function useFileListUpload(files: File[]) {
+    const [ upload_progress, setUploadProgress ] = useState(new Array(files.length).fill(0));
+    const [ errors, setErrors ] = useState<any[]>(new Array(files.length).fill(null).map(() => ""));
+    if (files.length === 0) {
+        return [[], () => {}];
+    }
+    let next_file = 0;
+    let upload_finished = false;
+    let resolve_s: (value: unknown) => void;
+    const file_count = files.length;
+
+    const uploadNextFile = () => {
+        if (upload_finished) {
+            return;
+        } else if (next_file > file_count) {
+            upload_finished = true;
+            resolve_s("Success");
+            return;
+        }
+        const updateProgressForFile = (progress: number) => {
+            upload_progress[next_file] = progress;
+            setUploadProgress(upload_progress);
+        }
+        const reportErrorForFile = (error: any) => {
+            errors[next_file] = error;
+            setErrors(errors);
+        }
+        uploadOneFile(files[next_file], updateProgressForFile)
+            .then(uploadNextFile)
+            .catch(reportErrorForFile);
+        next_file++;
+    };
+
+    const beginUpload = new Promise((resolve, reject) => {
+        resolve_s = resolve;
+        uploadNextFile();
+    });
+
+    const computeTotalProgress = upload_progress.reduce((sum, curr) => sum + curr, 0) / file_count;
+
+    return [ computeTotalProgress, uploadNextFile, errors ] as [ number, () => void, string[] ]
+}
+
 /* useFileUpload
  * react hook to upload file
  * calling beginUpload twice will cause the file to be uploaded twice
@@ -52,43 +95,46 @@ export function useFileUpload(file: File) {
     const [ upload_progress, setUploadProgress ] = useState(0);
 
     const beginUpload = () => {
-        const filename = file.name;
-        const data = new FormData();
-        const csrftoken = getCookieByName('csrftoken');
-        data.append('file', file);
-        data.append('filename', filename);
-        const xhr = new XMLHttpRequest();
-        setUploadProgress(0);
-
-        return new Promise((resolve, reject) => {
-            xhr.upload.addEventListener("progress", (event) => {
-            if (event.lengthComputable) {
-                console.log("upload progress:", event.loaded / event.total);
-                setUploadProgress(event.loaded / event.total);
-            }
-            });
-            xhr.addEventListener("progress", (event) => {
-            if (event.lengthComputable) {
-                console.log("download progress:", event.loaded / event.total);
-                setUploadProgress(event.loaded / event.total);
-            }
-            });
-            xhr.addEventListener("loadend", () => {
-                setUploadProgress(100);
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    resolve(JSON.parse(xhr.responseText) as File);
-                } else {
-                    reject("Load failed")
-                }
-            });
-            xhr.open("POST", FILE_UPLOAD_PATH, true);
-            xhr.withCredentials = true;
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            xhr.send(data);
-        });
-    };
-
+        return uploadOneFile(file, setUploadProgress);
+    }
     return [ upload_progress, beginUpload ] as [number, () => Promise<void>];
+}
+
+export function uploadOneFile(file: File, setUploadProgress?: (progress: number) => void) {
+    const filename = file.name;
+    const data = new FormData();
+    const csrftoken = getCookieByName('csrftoken');
+    data.append('file', file);
+    data.append('filename', filename);
+    const xhr = new XMLHttpRequest();
+    if (setUploadProgress) setUploadProgress(0);
+
+    return new Promise((resolve, reject) => {
+        xhr.upload.addEventListener("progress", (event) => {
+        if (event.lengthComputable) {
+            console.log("upload progress:", event.loaded / event.total);
+            if (setUploadProgress) setUploadProgress(event.loaded / event.total);
+        }
+        });
+        xhr.addEventListener("progress", (event) => {
+        if (event.lengthComputable) {
+            console.log("download progress:", event.loaded / event.total);
+            if (setUploadProgress) setUploadProgress(event.loaded / event.total);
+        }
+        });
+        xhr.addEventListener("loadend", () => {
+            if (setUploadProgress) setUploadProgress(100);
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                resolve(JSON.parse(xhr.responseText) as File);
+            } else {
+                reject("Load failed")
+            }
+        });
+        xhr.open("POST", FILE_UPLOAD_PATH, true);
+        xhr.withCredentials = true;
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.send(data);
+    });
 }
 
 export interface FileUploadInfo {
