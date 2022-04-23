@@ -38,11 +38,11 @@ export async function getFilesInfo(): Promise<Array<FileInfo> | null> {
     return results;
 }
 
-export function useFileListUpload(files: File[]) {
+export function useFileListUpload(files: File[]): [number, number[], () => Promise<any>, any[]] {
     const [ upload_progress, setUploadProgress ] = useState(new Array(files.length).fill(0));
     const [ errors, setErrors ] = useState<any[]>(new Array(files.length).fill(null).map(() => ""));
     if (files.length === 0) {
-        return [0, [], async () => {}, []] as [ number, number[], () => Promise<any>, any[] ];
+        return [0, [], async () => {}, []];
     }
     const file_count = files.length;
 
@@ -72,7 +72,7 @@ export function useFileListUpload(files: File[]) {
 
     const computeTotalProgress = upload_progress.reduce((sum, curr) => sum + curr, 0) / file_count;
 
-    return [ computeTotalProgress, beginUpload, errors ] as [ number, () => Promise<any>, any[] ]
+    return [ computeTotalProgress, upload_progress, beginUpload, errors ];
 }
 
 /* useFileUpload
