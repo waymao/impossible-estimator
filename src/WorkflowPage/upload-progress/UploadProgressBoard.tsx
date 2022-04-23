@@ -1,20 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     useLocation
 } from 'react-router-dom';
-import { FileUploadInfo } from '../files';
+import { FileUploadInfo, useFileListUpload } from '../files';
 import UploadProgress from './UploadProgress';
 
 export default function UploadProgressBoard() {
     const {state } = useLocation();
-    if(!state) {
-        return <div>ASDF</div>
-    }
+    useEffect(() => {
+        beginUpload();
+    }, []);
+
     const { files } = state as {files: File[]};
+    const [total_progress, upload_progress, beginUpload, errors] = useFileListUpload(files);
+
     if(files) {
         return <div>
-        {files.map(
-            (file: File) => <UploadProgress file={file}/>)}
+            <p>{total_progress}</p>
+            {files.map(
+                (file: File, index: number) => <UploadProgress key={index} file={file} progress={upload_progress[index]}/>)}
         </div>
     }else {
         return <div>
