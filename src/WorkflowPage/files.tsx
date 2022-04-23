@@ -117,7 +117,7 @@ export function uploadOneFile(file: File, setUploadProgress?: (progress: number)
         }
         });
         xhr.addEventListener("loadend", () => {
-            if (setUploadProgress) setUploadProgress(100);
+            if (setUploadProgress) setUploadProgress(1);
             if (xhr.readyState === 4 && xhr.status === 200) {
                 resolve(JSON.parse(xhr.responseText) as File);
             } else {
