@@ -52,11 +52,11 @@ export function useFileListUpload(files: File[]): [number, number[], () => Promi
         }
         const updateProgressForFile = (progress: number) => {
             upload_progress[file_index] = progress;
-            setUploadProgress(upload_progress);
+            setUploadProgress([ ...upload_progress ]);
         }
         const reportErrorForFile = (error: any) => {
             errors[file_index] = error;
-            setErrors(errors);
+            setErrors([ ...errors]);
         }
         try {
             await uploadOneFile(files[file_index], updateProgressForFile);
