@@ -42,43 +42,37 @@ export function useFileListUpload(files: File[]) {
     const [ upload_progress, setUploadProgress ] = useState(new Array(files.length).fill(0));
     const [ errors, setErrors ] = useState<any[]>(new Array(files.length).fill(null).map(() => ""));
     if (files.length === 0) {
-        return [[], () => {}];
+        return [0, [], async () => {}, []] as [ number, number[], () => Promise<any>, any[] ];
     }
-    let next_file = 0;
-    let upload_finished = false;
-    let resolve_s: (value: unknown) => void;
     const file_count = files.length;
 
-    const uploadNextFile = () => {
-        if (upload_finished) {
-            return;
-        } else if (next_file > file_count) {
-            upload_finished = true;
-            resolve_s("Success");
-            return;
+    const uploadNextFile = async (file_index: number) => {
+        if (file_index > file_count) {
+            return "success";
         }
         const updateProgressForFile = (progress: number) => {
-            upload_progress[next_file] = progress;
+            upload_progress[file_index] = progress;
             setUploadProgress(upload_progress);
         }
         const reportErrorForFile = (error: any) => {
-            errors[next_file] = error;
+            errors[file_index] = error;
             setErrors(errors);
         }
-        uploadOneFile(files[next_file], updateProgressForFile)
-            .then(uploadNextFile)
-            .catch(reportErrorForFile);
-        next_file++;
+        try {
+            await uploadOneFile(files[file_index], updateProgressForFile);
+        } catch (e) {
+            reportErrorForFile(e);
+        }
+        await uploadNextFile(file_index + 1);
     };
 
-    const beginUpload = new Promise((resolve, reject) => {
-        resolve_s = resolve;
-        uploadNextFile();
-    });
+    const beginUpload = async () => {
+        return await uploadNextFile(0);
+    };
 
     const computeTotalProgress = upload_progress.reduce((sum, curr) => sum + curr, 0) / file_count;
 
-    return [ computeTotalProgress, uploadNextFile, errors ] as [ number, () => void, string[] ]
+    return [ computeTotalProgress, beginUpload, errors ] as [ number, () => Promise<any>, any[] ]
 }
 
 /* useFileUpload
