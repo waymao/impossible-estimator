@@ -16,7 +16,7 @@ export default function UploadProgressBoard() {
 
     if(files) {
         return <div>
-            <p>{total_progress}</p>
+            <p>{Math.round(total_progress*1000)/10}</p>
             {files.map(
                 (file: File, index: number) => <UploadProgress key={index} file={file} progress={upload_progress[index]}/>)}
         </div>
