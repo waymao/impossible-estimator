@@ -7,7 +7,6 @@ import UploadProgress from './UploadProgress';
 
 export default function UploadProgressBoard() {
     const {state } = useLocation();
-    console.log(state);
     if(!state) {
         return <div>ASDF</div>
     }
