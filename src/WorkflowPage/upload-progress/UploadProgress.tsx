@@ -13,7 +13,7 @@ export default function UploadProgress({file, progress}: {file: File, progress: 
     return <div className={styles.uploadProgress}>
         <span>{file.name}</span>
         <span>{file.size}</span>
-        <span>{`${progress}%`}</span>
+        <span>{`${Math.round(progress * 1000)/10}%`}</span>
         {/* <span><Button onClick={beginUpload}>Upload</Button></span> */}
     </div>
 }
