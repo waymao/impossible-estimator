@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import {
-    useLocation
-} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FileUploadInfo, useFileListUpload } from '../files';
 import UploadProgress from './UploadProgress';
 
 export default function UploadProgressBoard() {
+    const navigate = useNavigate();
     const {state } = useLocation();
     useEffect(() => {
         beginUpload();
@@ -13,7 +13,9 @@ export default function UploadProgressBoard() {
 
     const { files } = state as {files: File[]};
     const [total_progress, upload_progress, beginUpload, errors] = useFileListUpload(files);
-
+    if(total_progress == 1) {
+        navigate('/process/files/', {});
+    }
     if(files) {
         return <div>
             <p>{`${Math.round(total_progress*1000)/10}%`} percent done</p>
