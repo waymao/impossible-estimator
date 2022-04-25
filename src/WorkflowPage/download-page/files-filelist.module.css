@@ -1,0 +1,55 @@
+div.uploadFileListPanel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+div.uploadFileListPanel > div > .oneFile {
+    background: #EDEDED;
+    border-radius: 1rem;
+    padding: 1rem 1.68rem;
+    margin: 4px 0;
+    display: flex;
+    flex-direction: row;
+    user-select: text;
+}
+
+div.uploadFileList {
+    overflow-y: auto;
+    flex: 1 1 auto;
+}
+
+button.uploadButton {
+    padding: 0.5rem 1rem;
+    margin-left: auto;
+    font-weight: bold;
+    border-radius: 1rem;
+}
+
+button.secondaryButton {
+    background-color: #F6F6F6;
+}
+
+button.secondaryButton:hover {
+    background-color: #EDEDED;
+}
+
+button.removeStyle {
+    /* https://stackoverflow.com/questions/2460100 */
+    background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+
+button.icoButton path{
+    transition: fill 0.2s;
+}
+
+button.icoButton:hover path{
+    /* TODO: change color */
+    fill: #0d6efd
+}

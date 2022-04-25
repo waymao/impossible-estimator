@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NumberLiteralType } from "typescript";
 import { API_HOST } from '../config';
 import { FILE_HOST } from '../config';
 import { getCookieByName } from '../UploadPage/csrf';
@@ -6,7 +7,7 @@ import { getCookieByName } from '../UploadPage/csrf';
 const FILE_STATIC_PATH = "/uploads/"
 const FILE_INFO_PATH = "/file/all"
 const FILE_UPLOAD_PATH = API_HOST + "/file/upload"
-const EXTRACT_EXTRACT_PATH = "/transform/"
+const TRANSFORM_PATH = "/transform/"
 // TODO changeme??
 
 export interface FileInfo {
@@ -143,4 +144,28 @@ export function makeFileUploadInfo(file: File) {
         upload_progress: 0,
         file_url: null
     } as FileUploadInfo;
+}
+
+export function downloadFileCSV(file_name: string, file_id: number) {
+    console.log(file_id);
+    fetch(
+        `${API_HOST}${TRANSFORM_PATH}retrieve-csv/${file_id}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-type': 'text/csv; charset=UTF-8',
+          },
+        }
+      )
+      .then(async (res) => {
+        var blob = await res.blob();
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        var file = window.URL.createObjectURL(blob);
+        a.href = file;
+        a.download = file_name.slice(0, -4) + '-processed.csv';
+        a.click();
+        window.URL.revokeObjectURL(file);
+        // window.location.assign(file);
+      });
 }
