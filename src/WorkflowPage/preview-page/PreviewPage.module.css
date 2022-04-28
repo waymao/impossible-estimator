@@ -13,3 +13,8 @@
     padding: 1rem;
     border-radius: 15px;
 }
+
+.pdfViewArea {
+    border: 1px solid #333;
+    background-color: #aaa;
+}

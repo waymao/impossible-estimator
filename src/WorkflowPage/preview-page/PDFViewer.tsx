@@ -4,6 +4,8 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist';
 import { Button } from 'react-bootstrap';
 import { ProcessedDataPoint } from '../datapoints';
+import {useWindowSize} from './viewer-utils';
+import styles from './PreviewPage.module.css';
 
 export interface BoxToDraw {
     x1: number,
@@ -18,8 +20,6 @@ export interface BoxToDraw {
     children?: React.ReactNode
 }
 
-const PDF_DRAW_SCALE = 2
-
 export interface Props {
     url: string, 
     page?: number, 
@@ -29,6 +29,7 @@ export interface Props {
 
 export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: Props){
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
     // console.log(boxes_to_draw);
 
@@ -39,35 +40,62 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
     // size of the canvas
     const [canvas_size, setCanvasSize] = useState<[number, number]>([0, 0]);
     const [viewport_s, setViewPort] = useState<pdfjsLib.PageViewport>();
+    const [enlarge_ratio, setEnlargeRatio] = useState<number>(1);
+    const [initial_container_dim, setInitContainerDim] = React.useState<[number, number]>();
+    const [window_width, window_height] = useWindowSize();
 
-    const renderPage = useCallback((pageNum, pdf=pdfRef) => {
-        pdf && pdf.getPage(pageNum).then((page: PDFPageProxy) => {
-        const viewport = page.getViewport({scale: PDF_DRAW_SCALE});
-        const canvas = canvasRef.current;
-        if (canvas) {
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            canvas.style.height = viewport.height / PDF_DRAW_SCALE + "px";
-            canvas.style.width = viewport.width / PDF_DRAW_SCALE + "px";
-            setCanvasSize([viewport.height / PDF_DRAW_SCALE, viewport.height / PDF_DRAW_SCALE]);
-
-            const context = canvas.getContext('2d');
-            if (context !== null) {
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-                setViewPort(viewport);
-                page.render(renderContext);
-            }
+    React.useEffect(() => {
+        const container = containerRef.current;
+        if (container && 
+            (!initial_container_dim || 
+                initial_container_dim[0] != container.clientWidth - 20 ||
+                initial_container_dim[1] != container.clientHeight - 20)) 
+                // update initialheight on window resize 
+                // TODO bug
+        {
+            setInitContainerDim([container.clientWidth - 10, container.clientHeight - 10])
         }
+    }, [containerRef, window_width, window_height]);
+
+    const renderPage = (pageNum: number, pdf=pdfRef) => {
+        const screen_scale = window.devicePixelRatio ?? 1;
+        pdf && pdf.getPage(pageNum).then((page: PDFPageProxy) => {
+            const canvas = canvasRef.current;
+            const container = containerRef.current;
+            if (canvas && container) {
+                console.log("file width", page.getViewport({scale: 1}).width);
+                console.log("screen scale", screen_scale);
+                console.log("initial size", initial_container_dim)
+                const original_ratio_viewport = page.getViewport({scale: 1});
+                const outputScale = Math.min(
+                    (initial_container_dim?.[0] ?? 100) / original_ratio_viewport.width,
+                    (initial_container_dim?.[1] ?? 100) / original_ratio_viewport.height
+                ) * screen_scale * enlarge_ratio;
+                const viewport = page.getViewport({ scale: outputScale });
+                console.log("vp:", viewport.width, viewport.height, "; ratio:", outputScale)
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                canvas.style.height = viewport.height / screen_scale * enlarge_ratio + "px";
+                canvas.style.width = viewport.width / screen_scale * enlarge_ratio + "px";
+                setCanvasSize([viewport.width / screen_scale * enlarge_ratio, viewport.height / screen_scale * enlarge_ratio]);
+
+                const context = canvas.getContext('2d');
+                if (context !== null) {
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    setViewPort(viewport);
+                    page.render(renderContext);
+                }
+            }
         });
-    }, [pdfRef]);
+    };
 
     // effect to render the page using pdf
     useEffect(() => {
         renderPage(currentPage, pdfRef);
-    }, [pdfRef, currentPage, renderPage]);
+    }, [pdfRef, currentPage, enlarge_ratio, window_width]);
 
     // effect to 
     useEffect(() => {
@@ -85,10 +113,10 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
             // console.log(rect);
             return <div 
                 style={{
-                    left: rect[0] / viewport_s.width * 100 + '%',
-                    top: rect[1] / viewport_s.height * 98.5 + '%', // TODO change coord
-                    width: (rect[2] - rect[0]) / viewport_s.width * 100 + '%',
-                    height: (rect[3] - rect[1]) / viewport_s.height * 100 + '%',
+                    left: rect[0] / viewport_s.width * canvas_size[0] + 'px',
+                    top: rect[1] / viewport_s.height * canvas_size[1] + 'px', // TODO change coord
+                    width: (rect[2] - rect[0]) / viewport_s.width * canvas_size[0] + 'px',
+                    height: (rect[3] - rect[1]) / viewport_s.height * canvas_size[1] + 'px',
                     border: "1px solid " + box.color ?? "black",
                     position: "absolute",
                     cursor: "pointer",
@@ -98,7 +126,7 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
             >
                 {box.children}
             </div>}
-        )}, [boxes_to_draw, canvas_size]);
+        )}, [boxes_to_draw, canvas_size, enlarge_ratio]);
 
     // process page number request
     useEffect(() => {
@@ -123,19 +151,30 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
         }
     }
 
-    return <div>
-        <div className="canvas1 position-relative">
-            <canvas ref={canvasRef}></canvas>
-            <div className="position-absolute w-100 h-100 top-0 start-0">
-                <div style={{position: 'relative', width: '100%', height: '100%'}}>
-                    {boxes}
+    return <div className="h-100 d-flex flex-column pb-2">
+        <div 
+            className={"canvas1 flex-grow-1 overflow-auto " + styles.pdfViewArea} 
+            ref={containerRef} 
+            style={{width: window_width * 0.55, height: window_height * 0.7, backgroundColor: "#ccc"}}
+        >
+            <div className="position-relative">
+                <canvas ref={canvasRef}></canvas>
+                <div className="position-absolute w-100 h-100 top-0 start-0">
+                    <div style={{position: 'relative', width: '100%', height: '100%'}}>
+                        {boxes}
+                    </div>
                 </div>
             </div>
         </div>
 
         <br/>
-        <Button onClick={prevPage} className="me-2">Prev Page</Button>
-        <Button onClick={nextPage} className="me-2">Next Page</Button>
-        <span>Current page: {currentPage}</span>
+        <div>
+            <Button onClick={prevPage} className="me-2">Prev Page</Button>
+            <Button onClick={nextPage} className="me-2">Next Page</Button>
+            <Button onClick={() => setEnlargeRatio(enlarge_ratio * 1.05)} className="me-2">+</Button>
+            <Button onClick={() => setEnlargeRatio(enlarge_ratio / 1.05)} className="me-2">-</Button>
+            <Button onClick={() => setEnlargeRatio(1)} className="me-2">Reset Ratio</Button>
+            <span>Current page: {currentPage}</span>
+        </div>
     </div>;
 }

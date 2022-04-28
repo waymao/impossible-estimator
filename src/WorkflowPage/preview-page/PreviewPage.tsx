@@ -82,7 +82,7 @@ export function PreviewPage() {
     }
 
     return <div className={styles.previewPageBoard}>
-        <div className={styles.ListPanel}>
+        <div className={styles.ListPanel + "  col-4"}>
         <Tabs 
             defaultActiveKey="profile" 
             activeKey={mode}
@@ -97,7 +97,7 @@ export function PreviewPage() {
             </Tab>
         </Tabs>
         </div>
-        <div>
+        <div className="col-8 h-100">
             <PDFViewer 
                 url={file_info?.path ?? ""}
                 boxes_to_draw={boxes_data} 
