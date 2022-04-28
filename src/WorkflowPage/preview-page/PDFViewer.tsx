@@ -8,6 +8,7 @@ import {useWindowSize} from './viewer-utils';
 import styles from './PreviewPage.module.css';
 
 export interface BoxToDraw {
+    id: string,
     x1: number,
     x2: number,
     y1: number,
@@ -123,6 +124,8 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
                     ...box.style
                 }}
                 onClick={box.onClick}
+                id={box.id}
+                color={box.color}
             >
                 {box.children}
             </div>}
