@@ -19,7 +19,7 @@ interface RowProps {
     setPage: (page: number) => void
 }
 
-function ProcessedTableRow({data, setPage}: RowProps) {
+function RawTableRow({data, setPage}: RowProps) {
     return <Row className={styles.tbRow}>
         <Col md="6" className="text-start">{data.content}</Col>
         <Col md="1" sm="3">{dataCategoryToIcon(data.type)}</Col>
@@ -29,7 +29,7 @@ function ProcessedTableRow({data, setPage}: RowProps) {
                 <i className="fa-solid fa-magnifying-glass"></i>
             </Button>
             <Button variant="link" className="link-icon-button">
-                <i className="fa-solid fa-pen"></i>
+                <i className="fa-solid fa-circle-plus"></i>
             </Button>
         </Col>
     </Row>;
@@ -58,7 +58,7 @@ export default function RawDataTable({filename, data, filter_page, setPage}: Pro
         </Row>
         {filtered_data.map(
             (data: RawDataPoint, idx: number) => 
-                <ProcessedTableRow data={data} key={data.id} setPage={setPage}/>
+                <RawTableRow data={data} key={data.id} setPage={setPage}/>
         )}
     </div>
     </>

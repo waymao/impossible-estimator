@@ -1,7 +1,7 @@
 import { TransformResult, ProcessedDataPoint } from "../datapoints"
 import { Button, Row, Col } from 'react-bootstrap';
 import React from 'react';
-
+import styles from './table.module.css'
 
 interface RowProps {
     data: ProcessedDataPoint, 
@@ -9,14 +9,19 @@ interface RowProps {
 }
 
 function ProcessedTableRow({data, setPage}: RowProps) {
-    return <div>
-    <Row>
-        <Col>{data.content}</Col>
-        <Col>{data.page}</Col>
-        <Col>{data.stat}</Col>
-        <Col>Actions</Col>
-    </Row>
-    </div>;
+    return <Row className={styles.tbRow}>
+        <Col md="4" className="text-start">{data.content}</Col>
+        <Col md="3" className="text-start">{data.stat}</Col>
+        <Col md="2" sm="3" className="text-center">{data.page}</Col>
+        <Col md="3" className="text-end">
+            <Button variant="link" className="link-icon-button" onClick={() => setPage(data.page + 1)}>
+                <i className="fa-solid fa-magnifying-glass"></i>
+            </Button>
+            <Button variant="link" className="link-icon-button">
+                <i className="fa-solid fa-pen"></i>
+            </Button>
+        </Col>
+    </Row>;
 }
 
 interface Props {
@@ -31,36 +36,18 @@ export default function ProcessedTable({filename, data, filter_page, setPage}: P
         (filter_page == undefined) ?
             data.processed_datas : data.processed_datas.filter(dp => dp.page === filter_page)
     , [filter_page, data]);
-    return <><h4>{filename}</h4>
-    <table>
-        <thead>
-        <tr>
-            <th>data</th>
-            <th>page</th>
-            <th>tag</th>
-            {/* <th>action</th> */}
-        </tr>
-        </thead>
-        <tbody>
+    return <><h5>{filename}</h5>
+    <div className="overflow-auto px-2 text-center" style={{height: "75vh"}}>
+        <Row className="text-center bg-secondary text-white">
+            <Col md="4">Keyword</Col>
+            <Col md="3">Data</Col>
+            <Col md="2">Page</Col>
+            <Col md="3">Action</Col>
+        </Row>
         {filtered_data.map(
-            (data: ProcessedDataPoint, idx: number) => 
-                <tr key={idx}>
-                    <td>Data: {data.stat}</td>
-                    <td className="me-1">Page: {data.page}</td>
-                    <td className="me-1">{data.content}</td>
-                    <td className="me-1">
-                        <Button variant="link" onClick={() => setPage(data.page + 1)}>
-                            Lookup
-                        </Button>
-                    </td>
-                    <td className="me-1">
-                        <Button variant="link">
-                            Edit
-                        </Button>
-                    </td>
-                </tr>
+            (data: ProcessedDataPoint) => 
+                <ProcessedTableRow data={data} key={data.id} setPage={setPage}/>
         )}
-        </tbody>
-    </table>
+    </div>
     </>
 }
