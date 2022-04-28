@@ -144,7 +144,7 @@ export function PreviewPage() {
                 <ProcessedTable filter_page={page - 1} filename={file_info.name} data={data} setPage={changePage}/>
             </Tab>
             <Tab eventKey="raw_all" title="Raw Data">
-                <RawDataTable filter_page={page - 1} filename={file_info.name} data={raw_data} setPage={changePage}/>
+                <RawDataTable filter_page={page - 1} filename={file_info.name} data={raw_data} setPage={changePage} setCurrentKeyword={enterEditMode}/>
             </Tab>
             <Tab eventKey="edit" title="Edit" disabled={(editing_node === null)}>
                 {editing_node !== null ? 
