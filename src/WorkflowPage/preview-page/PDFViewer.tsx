@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 // import { pdfjsWorker } from 'pdfjs-dist/build/pdf.worker.entry';
 import { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist';
-import { Button } from 'react-bootstrap';
+import { Button, ButtonGroup, ButtonToolbar } from 'react-bootstrap';
 import { ProcessedDataPoint } from '../datapoints';
 import {useWindowSize} from './viewer-utils';
 import styles from './PreviewPage.module.css';
@@ -124,7 +124,7 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
                     ...box.style
                 }}
                 onClick={box.onClick}
-                id={box.id}
+                key={box.id}
                 color={box.color}
             >
                 {box.children}
@@ -137,6 +137,13 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
             setCurrentPage(page);
         }
     }, [page]);
+
+    const setPage = (page: number) => {
+        if (pdfRef) {
+            setCurrentPage(page);
+            reportChangePage?.(page);
+        }
+    }
 
     const nextPage = () => {
         if (pdfRef && currentPage < pdfRef.numPages) {
@@ -155,6 +162,36 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
     }
 
     return <div className="h-100 d-flex flex-column pb-2">
+        <div className="mb-2">
+            <ButtonToolbar aria-label="Toolbar with button groups">
+                <ButtonGroup>
+                    <Button variant="light" onClick={() => setPage(1)}>
+                        <i className="fa-solid fa-angles-left"></i>
+                    </Button>
+                    <Button variant="light" onClick={prevPage}>
+                        <i className="fa-solid fa-angle-left"></i>
+                    </Button>
+                    <Button variant="light" disabled style={{width: "8rem"}}>
+                        Page {currentPage}
+                    </Button>
+                    <Button variant="light" onClick={nextPage}>
+                        <i className="fa-solid fa-angle-right"></i>
+                    </Button>
+                    <Button variant="light" onClick={() => setPage(pdfRef?.numPages ?? 1)} className="me-2">
+                        <i className="fa-solid fa-angles-right"></i>
+                    </Button>
+                </ButtonGroup>
+                <ButtonGroup>
+                    <Button variant="light" onClick={() => setEnlargeRatio(enlarge_ratio * 1.05)}>
+                        <i className="fa-solid fa-magnifying-glass-plus"></i>
+                    </Button>
+                    <Button variant="light" onClick={() => setEnlargeRatio(enlarge_ratio / 1.05)}>
+                    <i className="fa-solid fa-magnifying-glass-minus"></i>
+                    </Button>
+                    <Button variant="light" onClick={() => setEnlargeRatio(1)} className="me-2">Reset Ratio</Button>
+                </ButtonGroup>
+            </ButtonToolbar>
+        </div>
         <div 
             className={"canvas1 flex-grow-1 overflow-auto " + styles.pdfViewArea} 
             ref={containerRef} 
@@ -168,16 +205,6 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
                     </div>
                 </div>
             </div>
-        </div>
-
-        <br/>
-        <div>
-            <Button onClick={prevPage} className="me-2">Prev Page</Button>
-            <Button onClick={nextPage} className="me-2">Next Page</Button>
-            <Button onClick={() => setEnlargeRatio(enlarge_ratio * 1.05)} className="me-2">+</Button>
-            <Button onClick={() => setEnlargeRatio(enlarge_ratio / 1.05)} className="me-2">-</Button>
-            <Button onClick={() => setEnlargeRatio(1)} className="me-2">Reset Ratio</Button>
-            <span>Current page: {currentPage}</span>
         </div>
     </div>;
 }
