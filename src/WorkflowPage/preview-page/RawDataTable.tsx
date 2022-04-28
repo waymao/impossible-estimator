@@ -1,6 +1,7 @@
 import { ExtractResult, RawDataPoint } from "../datapoints"
-import { Button, Table } from 'react-bootstrap';
+import { Button, Row, Col } from 'react-bootstrap';
 import React from 'react';
+import styles from './table.module.css'
 
 function dataCategoryToIcon(category: RawDataPoint["type"]) {
     switch (category) {
@@ -19,19 +20,19 @@ interface RowProps {
 }
 
 function ProcessedTableRow({data, setPage}: RowProps) {
-    return <tr>
-        <td>{data.content}</td>
-        <td>{dataCategoryToIcon(data.type)}</td>
-        <td className="text-center">{data.page}</td>
-        <td className="text-end">
+    return <Row className={styles.tbRow}>
+        <Col md="6" className="text-start">{data.content}</Col>
+        <Col md="1" sm="3">{dataCategoryToIcon(data.type)}</Col>
+        <Col md="2" sm="3" className="text-center">{data.page}</Col>
+        <Col md="3" className="text-end">
             <Button variant="link" className="link-icon-button" onClick={() => setPage(data.page + 1)}>
                 <i className="fa-solid fa-magnifying-glass"></i>
             </Button>
             <Button variant="link" className="link-icon-button">
                 <i className="fa-solid fa-pen"></i>
             </Button>
-        </td>
-    </tr>;
+        </Col>
+    </Row>;
 }
 
 
@@ -48,25 +49,17 @@ export default function RawDataTable({filename, data, filter_page, setPage}: Pro
         (filter_page === undefined) ?
             data.raw_data : data.raw_data.filter(dp => dp.page === filter_page)
     , [filter_page, data]);
-    return <><h4>{filename}</h4>
-    <div className="overflow-auto" style={{height: "75vh"}}>
-        <Table responsive hover size="sm">
-            <thead>
-            <tr>
-                <th>Content</th>
-                <th>Type</th>
-                <th className="text-center">Page</th>
-                <th></th>
-                {/* <th>action</th> */}
-            </tr>
-            </thead>
-            <tbody>
-            {filtered_data.map(
-                (data: RawDataPoint, idx: number) => 
-                    <ProcessedTableRow data={data} key={data.id} setPage={setPage}/>
-            )}
-            </tbody>
-        </Table>
+    return <><h5>{filename}</h5>
+    <div className="overflow-auto px-2 text-center" style={{height: "75vh"}}>
+        <Row className="text-center bg-secondary text-white">
+            <Col md="6">Content</Col>
+            <Col md="1">T</Col>
+            <Col md="2">Page</Col>
+        </Row>
+        {filtered_data.map(
+            (data: RawDataPoint, idx: number) => 
+                <ProcessedTableRow data={data} key={data.id} setPage={setPage}/>
+        )}
     </div>
     </>
 }
