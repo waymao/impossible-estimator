@@ -90,10 +90,10 @@ export function PreviewPage() {
             className="mb-3"
         >
             <Tab eventKey="processed" title="Processed Data">
-                <ProcessedTable filename={file_info.name} data={data} setPage={setPage}/>
+                <ProcessedTable filter_page={page - 1} filename={file_info.name} data={data} setPage={setPage}/>
             </Tab>
             <Tab eventKey="raw_all" title="Raw Data">
-                <RawDataTable filename={file_info.name} data={raw_data} setPage={setPage}/>
+                <RawDataTable filter_page={page - 1} filename={file_info.name} data={raw_data} setPage={setPage}/>
             </Tab>
         </Tabs>
         </div>

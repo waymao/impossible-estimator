@@ -116,7 +116,7 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
     }
 
     const prevPage = () => {
-        if (pdfRef && currentPage > 0) {
+        if (pdfRef && currentPage > 1) {
             const newpage = currentPage - 1;
             setCurrentPage(newpage);
             reportChangePage?.(newpage);
