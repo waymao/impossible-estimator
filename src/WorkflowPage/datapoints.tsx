@@ -12,7 +12,7 @@ export interface ProcessedDataPoint {
 export interface RawDataPoint {
     id: number,
     page: number,
-    type: "NUM" | "TXT",
+    type: "NUM" | "STR",
     content: string,
     stat: string,
     coord: [number, number, number, number]

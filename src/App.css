@@ -1,0 +1,14 @@
+button.link-icon-button {
+    display: inline-block;
+    padding: 0 0.1rem;
+    color: #666;
+    transition: 0.5s;
+}
+
+button.link-icon-button:hover, button.link-icon-button:focus {
+    color: black;
+}
+
+button.link-icon-button:focus {
+    box-shadow: none;
+}

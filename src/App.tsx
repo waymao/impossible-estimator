@@ -1,6 +1,8 @@
 import React from 'react';
 import './App.css';
-// import UploadBoard from './UploadFile/UploadBoard';
+// import '@fortawesome/fontawesome-free/js/all.js';
+import '@fortawesome/fontawesome-free/css/all.css';
+
 import {
   Routes,
   Route,

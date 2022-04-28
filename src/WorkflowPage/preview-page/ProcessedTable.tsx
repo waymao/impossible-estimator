@@ -1,6 +1,23 @@
 import { TransformResult, ProcessedDataPoint } from "../datapoints"
-import { Button } from 'react-bootstrap';
+import { Button, Row, Col } from 'react-bootstrap';
 import React from 'react';
+
+
+interface RowProps {
+    data: ProcessedDataPoint, 
+    setPage: (page: number) => void
+}
+
+function ProcessedTableRow({data, setPage}: RowProps) {
+    return <div>
+    <Row>
+        <Col>{data.content}</Col>
+        <Col>{data.page}</Col>
+        <Col>{data.stat}</Col>
+        <Col>Actions</Col>
+    </Row>
+    </div>;
+}
 
 interface Props {
     filename: string,
@@ -8,7 +25,6 @@ interface Props {
     filter_page?: number,
     setPage: (page: number) => void
 }
-
 
 export default function ProcessedTable({filename, data, filter_page, setPage}: Props) {
     const filtered_data = React.useMemo(() => 

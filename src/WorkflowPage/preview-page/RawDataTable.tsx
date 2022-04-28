@@ -1,6 +1,39 @@
 import { ExtractResult, RawDataPoint } from "../datapoints"
-import { Button } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import React from 'react';
+
+function dataCategoryToIcon(category: RawDataPoint["type"]) {
+    switch (category) {
+        case "NUM":
+            return <i className="fa-solid fa-chart-simple"></i>;
+        case "STR":
+            return <i className="fa-solid fa-font"></i>;
+        default:
+            return <i className="fa-solid fa-circle-question"></i>;
+    }
+}
+
+interface RowProps {
+    data: RawDataPoint, 
+    setPage: (page: number) => void
+}
+
+function ProcessedTableRow({data, setPage}: RowProps) {
+    return <tr>
+        <td>{data.content}</td>
+        <td>{dataCategoryToIcon(data.type)}</td>
+        <td className="text-center">{data.page}</td>
+        <td className="text-end">
+            <Button variant="link" className="link-icon-button" onClick={() => setPage(data.page + 1)}>
+                <i className="fa-solid fa-magnifying-glass"></i>
+            </Button>
+            <Button variant="link" className="link-icon-button">
+                <i className="fa-solid fa-pen"></i>
+            </Button>
+        </td>
+    </tr>;
+}
+
 
 interface Props {
     filename: string,
@@ -17,37 +50,23 @@ export default function RawDataTable({filename, data, filter_page, setPage}: Pro
     , [filter_page, data]);
     return <><h4>{filename}</h4>
     <div className="overflow-auto" style={{height: "75vh"}}>
-        <table>
-        <thead>
-        <tr>
-            <th>data</th>
-            <th>page</th>
-            <th>type</th>
-            <th>tag</th>
-            {/* <th>action</th> */}
-        </tr>
-        </thead>
-        <tbody>
-        {filtered_data.map(
-            (data: RawDataPoint, idx: number) => 
-                <tr key={`page-${filter_page}-entry-${idx}`}>
-                    <td>{data.content}</td>
-                    <td className="me-1">{data.page + 1}</td>
-                    <td className="me-1">{data.type}</td>
-                    <td className="me-1">
-                        <Button variant="link" onClick={() => setPage(data.page + 1)}>
-                            Lookup
-                        </Button>
-                    </td>
-                    <td className="me-1">
-                        <Button variant="link">
-                            Edit
-                        </Button>
-                    </td>
-                </tr>
-        )}
-        </tbody>
-        </table>
+        <Table responsive hover size="sm">
+            <thead>
+            <tr>
+                <th>Content</th>
+                <th>Type</th>
+                <th className="text-center">Page</th>
+                <th></th>
+                {/* <th>action</th> */}
+            </tr>
+            </thead>
+            <tbody>
+            {filtered_data.map(
+                (data: RawDataPoint, idx: number) => 
+                    <ProcessedTableRow data={data} key={data.id} setPage={setPage}/>
+            )}
+            </tbody>
+        </Table>
     </div>
     </>
 }
