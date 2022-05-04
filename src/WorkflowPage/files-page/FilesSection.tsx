@@ -1,15 +1,19 @@
 import list_styles from './files-filelist.module.css';
 import styles from './files-section.module.css';
 import React, { useEffect } from "react";
-import { FileInfo, getFilesInfo } from "../files";
+import { FileInfo, getFilesInfo, requestProcess } from "../files";
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
 function FileItem({info}: {info: FileInfo}) {
   return <div className={list_styles.oneFile}>
+    <span className="me-2">{info.id}.</span>
     <span>{info.name}</span>
-    <Link to={"/process/analyze/" + info.id} className={styles.removeStyle + " ms-auto " + styles.icoButton}>
-      <Button> Process </Button>
+    <Button variant="secodary" onClick={() => requestProcess(info.id)} className="ms-auto">
+      Run Auto-search
+    </Button>
+    <Link to={"/process/analyze/" + info.id} className={styles.removeStyle + " ms-2 " + styles.icoButton}>
+      <Button> Validate </Button>
     </Link>
   </div>
 }

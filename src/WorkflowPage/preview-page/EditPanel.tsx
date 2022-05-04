@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, FormLabel, Form } from "react-bootstrap"
 import { 
     ProcessedDataPoint, 
@@ -14,12 +14,29 @@ interface Props {
     file_id: number,
     candidate_data?: RawDataPoint,
     override: boolean,
-    reportUpdate: (res: UpdateDPResult) => void
+    reportUpdate: (res: UpdateDPResult) => void,
+    cancelUpdate: () => void
 }
 
 
-export default function EditPanel({processed_data, raw_data, candidate_data, reportUpdate, file_id, override}: Props) {
+export default function EditPanel(props: Props) {
+    const {
+        processed_data, 
+        raw_data, 
+        candidate_data, 
+        reportUpdate, 
+        file_id, 
+        override
+    } = props;
+
     const [manual_data, setManualData] = React.useState("");
+    useEffect(() => {
+        if (processed_data !== undefined && processed_data.ref_num !== null) {
+            setManualData(processed_data.stat);
+        } else {
+            setManualData("");
+        }
+    }, [processed_data]);
 
     const updateInfo = async () => {
         try {
@@ -81,7 +98,8 @@ export default function EditPanel({processed_data, raw_data, candidate_data, rep
             </Form.Control>
         </Form.Group>
         <Form.Group>
-            <Button onClick={updateInfo}>Update</Button>
+            <Button onClick={updateInfo} className="me-2">Update</Button>
+            <Button variant="secondary" onClick={updateInfo}>Cancel</Button>
         </Form.Group>
     </div>
 }

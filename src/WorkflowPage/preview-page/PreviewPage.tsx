@@ -93,6 +93,11 @@ export function PreviewPage() {
         setMode('processed');
     }
 
+    const cancelDataUpdate = () => {
+        setMode('processed');
+        setSelectedData(null);
+    }
+
 
     const boxes_data: BoxToDraw[] = React.useMemo(() => {
         // returns processed data or raw data based on user selection
@@ -191,6 +196,7 @@ export function PreviewPage() {
                         raw_data={editing_node} 
                         candidate_data={selected_data || undefined}
                         reportUpdate={reportDataUpdate}
+                        cancelUpdate={cancelDataUpdate}
                         override={override}
                     /> :
                     <p>Error</p>}

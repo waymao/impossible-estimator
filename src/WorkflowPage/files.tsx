@@ -169,3 +169,16 @@ export function downloadFileCSV(file_name: string, file_id: number) {
         // window.location.assign(file);
       });
 }
+
+
+export async function requestProcess(file_id: number) {
+    console.log(file_id, "is ready to be processed");
+    const res = await fetch(`${API_HOST}${TRANSFORM_PATH}retrieve-csv/${file_id}`)
+    if (Math.floor(res.status / 100) !== 2) {
+        throw new Error();
+    }
+    // const res2 = await fetch(`${API_HOST}${TRANSFORM_PATH}retrieve-csv/${file_id}`)
+    // if (Math.floor(res.status / 100) !== 2) {
+    //     throw new Error();
+    // }
+}
