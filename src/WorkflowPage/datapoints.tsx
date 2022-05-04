@@ -13,6 +13,10 @@ export interface ProcessedDataPoint {
     stat_coord: [number, number, number, number]
 }
 
+export interface ProcessedDPUpdateReq extends ProcessedDataPoint {
+    override?: boolean
+}
+
 export interface RawDataPoint {
     id: number,
     filename: number,
@@ -60,7 +64,7 @@ export type UpdateDPResult = {
     old_id: number
 }
 
-export async function newTransformedDataPoint(data_point: ProcessedDataPoint): Promise<UpdateDPResult> {
+export async function newTransformedDataPoint(data_point: ProcessedDPUpdateReq): Promise<UpdateDPResult> {
     const csrftoken = getCookieByName('csrftoken');
     const response = await fetch(API_HOST + "/transform/data/new", {
         method: 'PUT',

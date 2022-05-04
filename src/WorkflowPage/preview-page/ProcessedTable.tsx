@@ -5,10 +5,11 @@ import styles from './table.module.css'
 
 interface RowProps {
     data: ProcessedDataPoint, 
-    setPage: (page: number) => void
+    setPage: (page: number) => void,
+    setCurrentKeyword: (data: ProcessedDataPoint) => void,
 }
 
-function ProcessedTableRow({data, setPage}: RowProps) {
+function ProcessedTableRow({data, setPage, setCurrentKeyword}: RowProps) {
     return <Row className={styles.tbRow}>
         <Col md="4" key="1" className="text-start">{data.content}</Col>
         <Col md="3" key="2" className="text-start">{data.stat}</Col>
@@ -17,7 +18,8 @@ function ProcessedTableRow({data, setPage}: RowProps) {
             <Button variant="link" className="link-icon-button" onClick={() => setPage(data.page + 1)}>
                 <i className="fa-solid fa-magnifying-glass"></i>
             </Button>
-            <Button variant="link" className="link-icon-button">
+            <Button variant="link" className="link-icon-button"
+                onClick={() => setCurrentKeyword(data)}>
                 <i className="fa-solid fa-pen"></i>
             </Button>
         </Col>
@@ -28,10 +30,11 @@ interface Props {
     filename: string,
     data: TransformResult,
     filter_page?: number,
-    setPage: (page: number) => void
+    setPage: (page: number) => void,
+    setCurrentKeyword: (data: ProcessedDataPoint) => void,
 }
 
-export default function ProcessedTable({filename, data, filter_page, setPage}: Props) {
+export default function ProcessedTable({filename, data, filter_page, setPage, setCurrentKeyword}: Props) {
     const filtered_data = React.useMemo(() => 
         (filter_page == undefined) ?
             data.processed_datas : data.processed_datas.filter(dp => dp.page === filter_page)
@@ -46,7 +49,12 @@ export default function ProcessedTable({filename, data, filter_page, setPage}: P
         </Row>
         {filtered_data.map(
             (data: ProcessedDataPoint) => 
-                <ProcessedTableRow data={data} key={data.id} setPage={setPage}/>
+                <ProcessedTableRow 
+                    data={data}
+                    key={`${data.ref_word}-stat-${data.ref_num}`}
+                    setPage={setPage}
+                    setCurrentKeyword={setCurrentKeyword}
+                />
         )}
     </div>
     </>

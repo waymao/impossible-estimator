@@ -18,6 +18,7 @@ export function PreviewPage() {
     const [raw_data, setRawData] = React.useState<ExtractResult>();
     const [mode, setMode] = React.useState<Mode>('processed');
     const [page, setPage] = React.useState<number>(1);
+    const [override, setOverride] = React.useState<boolean>(false);
     
 
     const changePage = (page: number) => {
@@ -44,9 +45,21 @@ export function PreviewPage() {
     const [selected_data, setSelectedData] = React.useState<RawDataPoint | null>(null);
     const enterEditMode = (data: RawDataPoint) => {
         setPage(data.page + 1);
+        setOverride(false);
         setEditingNode(data);
         setMode('edit');
         setSelectedData(null);
+    };
+    const enterEditModeFromTransform = (point: ProcessedDataPoint) => {
+        setPage(point.page + 1);
+        setOverride(true);
+        const editing_node = raw_data?.raw_data?.find(item => item.id === point.ref_word);
+        const selected_data = raw_data?.raw_data?.find(item => item.id === point.ref_num);
+        if (editing_node) {
+            setEditingNode(editing_node);
+            setMode('edit');
+            setSelectedData(selected_data ?? null);
+        }
     };
 
     /* 
@@ -84,21 +97,23 @@ export function PreviewPage() {
     const boxes_data: BoxToDraw[] = React.useMemo(() => {
         // returns processed data or raw data based on user selection
         if (mode === 'processed') {
-            return data?.processed_datas.flatMap(item => ([{
-                x1: item.coord[0],
-                y1: item.coord[1],
-                x2: item.coord[2],
-                y2: item.coord[3], 
-                color: 'black',
-                id: `processed-keyword-${item.id}`
-            }, {
-                x1: item.stat_coord[0],
-                y1: item.stat_coord[1],
-                x2: item.stat_coord[2],
-                y2: item.stat_coord[3], 
-                color: 'red',
-                id: `processed-stat-${item.id}`
-            }])) ?? [];
+            return data?.processed_datas
+                .filter(item => item.page + 1 === page)
+                .flatMap(item => ([{
+                    x1: item.coord[0],
+                    y1: item.coord[1],
+                    x2: item.coord[2],
+                    y2: item.coord[3], 
+                    color: 'black',
+                    id: `processed-keyword-${item.id}`
+                }, {
+                    x1: item.stat_coord[0],
+                    y1: item.stat_coord[1],
+                    x2: item.stat_coord[2],
+                    y2: item.stat_coord[3], 
+                    color: 'red',
+                    id: `processed-stat-${item.id}`
+                }])) ?? [];
         } else if (mode === 'raw_all') {
             return raw_data?.raw_data
                     .filter(item => item.page + 1 === page)
@@ -163,7 +178,7 @@ export function PreviewPage() {
             className="mb-3"
         >
             <Tab eventKey="processed" title="Processed Data">
-                <ProcessedTable filter_page={page - 1} filename={file_info.name} data={data} setPage={changePage}/>
+                <ProcessedTable filter_page={page - 1} filename={file_info.name} data={data} setPage={changePage} setCurrentKeyword={enterEditModeFromTransform}/>
             </Tab>
             <Tab eventKey="raw_all" title="Raw Data">
                 <RawDataTable filter_page={page - 1} filename={file_info.name} data={raw_data} setPage={changePage} setCurrentKeyword={enterEditMode}/>
@@ -176,6 +191,7 @@ export function PreviewPage() {
                         raw_data={editing_node} 
                         candidate_data={selected_data || undefined}
                         reportUpdate={reportDataUpdate}
+                        override={override}
                     /> :
                     <p>Error</p>}
             </Tab>
