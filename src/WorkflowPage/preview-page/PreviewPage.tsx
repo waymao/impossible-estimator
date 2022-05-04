@@ -1,7 +1,7 @@
 import styles from './PreviewPage.module.css';
 import React, { useState, useEffect, useCallback } from 'react';
 import PDFViewer, { BoxToDraw } from './PDFViewer';
-import { ExtractResult, getTransformedDataPoint, ProcessedDataPoint, TransformResult, getExtractedDataPoint, RawDataPoint } from '../datapoints';
+import { ExtractResult, getTransformedDataPoint, ProcessedDataPoint, UpdateDPResult, TransformResult, getExtractedDataPoint, RawDataPoint } from '../datapoints';
 import { useParams } from 'react-router';
 import { Tabs, Tab } from 'react-bootstrap';
 import { FileInfo, getFileInfo } from '../files';
@@ -49,6 +49,9 @@ export function PreviewPage() {
         setSelectedData(null);
     };
 
+    /* 
+     * Data selection
+     */
     const selectData = (data: RawDataPoint) => {
         if (mode === 'edit' && data.type === 'NUM') {
             setSelectedData(data);
@@ -57,6 +60,25 @@ export function PreviewPage() {
         }
     }
 
+    const reportDataUpdate = (result: UpdateDPResult) => {
+        if (result.new_data) {
+            const new_data = {...data} as TransformResult;
+            new_data?.processed_datas?.push(result.data);
+            setData(new_data);
+        } else {
+            const new_data = {...data} as TransformResult;
+            new_data.processed_datas = new_data.processed_datas.map(
+                item => {
+                    if (item.id === result.old_id) {
+                        return result.data
+                    } else {
+                        return item
+                    }
+                })
+            setData(new_data);
+        }
+        setMode('processed');
+    }
 
 
     const boxes_data: BoxToDraw[] = React.useMemo(() => {
@@ -148,7 +170,13 @@ export function PreviewPage() {
             </Tab>
             <Tab eventKey="edit" title="Edit" disabled={(editing_node === null)}>
                 {editing_node !== null ? 
-                    <EditPanel processed_data={undefined} raw_data={editing_node} candidate_data={selected_data || undefined}/> :
+                    <EditPanel 
+                        file_id={data.id}
+                        processed_data={undefined} 
+                        raw_data={editing_node} 
+                        candidate_data={selected_data || undefined}
+                        reportUpdate={reportDataUpdate}
+                    /> :
                     <p>Error</p>}
             </Tab>
         </Tabs>

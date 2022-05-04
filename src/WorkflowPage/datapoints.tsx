@@ -1,20 +1,24 @@
 import { API_HOST } from '../config';
+import { getCookieByName } from '../UploadPage/csrf';
 
 export interface ProcessedDataPoint {
-    id: number,
+    id?: number,
+    filename: number,
     page: number,
     content: string,
     coord: [number, number, number, number]
-    stat: number,
+    stat: string,
+    ref_word?: number,
+    ref_num?: number | null,
     stat_coord: [number, number, number, number]
 }
 
 export interface RawDataPoint {
     id: number,
+    filename: number,
     page: number,
     type: "NUM" | "STR",
     content: string,
-    stat: string,
     coord: [number, number, number, number]
 }
 
@@ -46,3 +50,29 @@ export async function getTransformedDataPoint(file_id: string) {
     return data;
 }
 
+export type UpdateDPResult = {
+    data: ProcessedDataPoint,
+    new_data: true,
+    old_id?: null
+} | {
+    data: ProcessedDataPoint,
+    new_data: false,
+    old_id: number
+}
+
+export async function newTransformedDataPoint(data_point: ProcessedDataPoint): Promise<UpdateDPResult> {
+    const csrftoken = getCookieByName('csrftoken');
+    const response = await fetch(API_HOST + "/transform/data/new", {
+        method: 'PUT',
+        headers: {
+            "X-CSRFToken": csrftoken,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data_point)
+    });
+    if (Math.floor(response.status / 100) === 2) {
+        return response.json();
+    } else {
+        throw new Error("Failed to create new data point.")
+    }
+}

@@ -10,10 +10,10 @@ interface RowProps {
 
 function ProcessedTableRow({data, setPage}: RowProps) {
     return <Row className={styles.tbRow}>
-        <Col md="4" className="text-start">{data.content}</Col>
-        <Col md="3" className="text-start">{data.stat}</Col>
-        <Col md="2" sm="3" className="text-center">{data.page}</Col>
-        <Col md="3" className="text-end">
+        <Col md="4" key="1" className="text-start">{data.content}</Col>
+        <Col md="3" key="2" className="text-start">{data.stat}</Col>
+        <Col md="2" key="3" sm="3" className="text-center">{data.page}</Col>
+        <Col md="3" key="4" className="text-end">
             <Button variant="link" className="link-icon-button" onClick={() => setPage(data.page + 1)}>
                 <i className="fa-solid fa-magnifying-glass"></i>
             </Button>
