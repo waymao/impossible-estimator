@@ -165,30 +165,30 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
         <div className="mb-2">
             <ButtonToolbar aria-label="Toolbar with button groups">
                 <ButtonGroup>
-                    <Button variant="light" onClick={() => setPage(1)}>
+                    <Button variant="secondary" onClick={() => setPage(1)}>
                         <i className="fa-solid fa-angles-left"></i>
                     </Button>
-                    <Button variant="light" onClick={prevPage}>
+                    <Button variant="secondary" onClick={prevPage}>
                         <i className="fa-solid fa-angle-left"></i>
                     </Button>
-                    <Button variant="light" disabled style={{width: "8rem"}}>
+                    <Button variant="secondary" disabled style={{width: "8rem", backgroundColor: "#6c757d"}}>
                         Page {currentPage}
                     </Button>
-                    <Button variant="light" onClick={nextPage}>
+                    <Button variant="secondary" onClick={nextPage}>
                         <i className="fa-solid fa-angle-right"></i>
                     </Button>
-                    <Button variant="light" onClick={() => setPage(pdfRef?.numPages ?? 1)} className="me-2">
+                    <Button variant="secondary" onClick={() => setPage(pdfRef?.numPages ?? 1)} className="me-2">
                         <i className="fa-solid fa-angles-right"></i>
                     </Button>
                 </ButtonGroup>
                 <ButtonGroup>
-                    <Button variant="light" onClick={() => setEnlargeRatio(enlarge_ratio * 1.05)}>
+                    <Button variant="secondary" onClick={() => setEnlargeRatio(enlarge_ratio * 1.05)}>
                         <i className="fa-solid fa-magnifying-glass-plus"></i>
                     </Button>
-                    <Button variant="light" onClick={() => setEnlargeRatio(enlarge_ratio / 1.05)}>
+                    <Button variant="secondary" onClick={() => setEnlargeRatio(enlarge_ratio / 1.05)}>
                     <i className="fa-solid fa-magnifying-glass-minus"></i>
                     </Button>
-                    <Button variant="light" onClick={() => setEnlargeRatio(1)} className="me-2">Reset Ratio</Button>
+                    <Button variant="secondary" onClick={() => setEnlargeRatio(1)} className="me-2">Reset Ratio</Button>
                 </ButtonGroup>
             </ButtonToolbar>
         </div>

@@ -41,7 +41,7 @@ export async function getExtractedDataPoint(file_id: string) {
 
 
 export async function getTransformedDataPoint(file_id: string) {
-    const response = await fetch(API_HOST + "/transform/retrieve-data/" + file_id);
+    const response = await fetch(API_HOST + "/transform/files/" + file_id);
     const data: TransformResult = await response.json();
     return data;
 }

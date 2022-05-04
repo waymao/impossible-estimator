@@ -28,7 +28,7 @@ export default function WorkflowPage() {
                 <Nav.Link href="/process/download">Download</Nav.Link>
             </Nav.Item>
         </Nav>
-        <Container className="mt-3 mb-5 flex-grow-1 d-flex">
+        <Container fluid className="mt-3 mb-5 mx-5 flex-grow-1 d-flex">
             <Routes>
                 <Route path='/analyze/:file_id' element={<PreviewPage />}/>
                 <Route path='/upload/' element={<UploadProgressBoard />}/>
