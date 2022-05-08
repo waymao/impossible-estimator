@@ -6,6 +6,11 @@ div#uploadPage {
     justify-content: flex-end;
 }
 
+button#uploadPage {
+    border: 0.1rem solid white;
+    border-radius: 2.5rem;
+}
+
 img.logo {
     width: 4rem;
 }
