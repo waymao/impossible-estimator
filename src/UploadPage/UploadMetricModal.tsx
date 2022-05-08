@@ -4,9 +4,16 @@ import { API_HOST } from '../config';
 const EXTRACT_URL = API_HOST + '/extract';
 
 export default function UploadMetricModal() {
+    const [inEditMode, setInEditMode] = useState({
+        status: false,
+        rowKey: -1,
+      });
     const [metrics, setMetrics] = useState<any[]>([]);
+    const [currMetric, setCurrMetric] = useState('');
+    const [currAssocList, setCurrAssocList] = useState('');
+    const [currType, setCurrType] = useState('');
+    const [newMetric, setNewMetric] = useState('');
     const fetchMetrics = async () => {
-        console.log(metrics);
         const metricsf = await fetch(`${EXTRACT_URL}/metrics`, {
             method: 'GET',
             headers: {
@@ -14,7 +21,6 @@ export default function UploadMetricModal() {
             }
         }).then(res => res.json());
         setMetrics(metricsf);
-        console.log(metrics);
 
     }
 
@@ -22,24 +28,178 @@ export default function UploadMetricModal() {
         fetchMetrics();
     }, []);
 
+    const onEdit = ({ id, currMetric, currAssocList, currType }:{id: number, currMetric: string, currAssocList: string, currType: string}) => {
+        setInEditMode({
+          status: true,
+          rowKey: id,
+        });
+        setCurrMetric(currMetric);
+        setCurrAssocList(currAssocList);
+        setCurrType(currType);
+    };
+
+    const onCancel = () => {
+        // reset the inEditMode state value
+        setInEditMode({
+          status: false,
+          rowKey: -1,
+        });
+        // reset the unit price state value
+        setCurrMetric('');
+        setCurrAssocList('');
+        setCurrType('');
+    };
+
+    const updateMetric = ({ id, currMetric, currAssocList, currType }:{id: number, currMetric: string, currAssocList: string, currType: string}) => {
+        const wordArray = currAssocList.split(',');
+        fetch(`${EXTRACT_URL}/metrics/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            word: currMetric,
+            associated_list: currAssocList,
+            type: currType,
+          }),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+          },
+        })
+          .then((response) => response.json())
+          .then(() => {
+            // reset inEditMode and unit price state values
+            onCancel();
+    
+            // fetch the updated data
+            fetchMetrics();
+          });
+    };
+
+    const deleteMetric = ({ id }:{id: number}) => {
+        fetch(`${EXTRACT_URL}/metrics/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+          },
+        }).then(() => {
+          // fetch the updated data
+          fetchMetrics();
+        });
+    };
+
+    const addMetric = () => {
+        fetch(`${EXTRACT_URL}/metrics`, {
+            method: 'POST',
+            body: JSON.stringify({
+                word: newMetric,
+                associated_list: [],
+                type: 'MET',
+            }),
+            headers: {
+              'Content-type': 'application/json; charset=UTF-8',
+            },
+          }).then(() => {
+            // fetch the updated data
+            fetchMetrics();
+          });
+    }
+
     return (metrics===[]) ? (
     <div>Loading...</div>
     ) : (
-    <div>
-        {console.log(metrics)}
-        <table>
-            <thead className="header">
-                <tr>
-                    <th>Metric</th>
-                </tr>
-            </thead>
-            <tbody>
-            {metrics.map(metric => {
-                return <tr key={metric.id}><td key={metric.word}>{metric.word}</td></tr>
-            })}
-            </tbody>
+        <div>
+            <table className="table">
+                <thead className="header">
+                    <tr>
+                        <th>Metric</th>
+                        <th>Associated Words</th>
+                        <th>Type</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {metrics.map(metric => {
+                    return <tr key={metric.id}>
+                        <td>{inEditMode.status && inEditMode.rowKey === metric.id ? (
+                        <input
+                            type="text"
+                            defaultValue={metric.word}
+                            onChange={(event) => setCurrMetric(event.target.value)}
+                        />
+                        ) : (
+                            metric.word
+                        )}</td>
+                        <td>{inEditMode.status && inEditMode.rowKey === metric.id ? (
+                        <input
+                            type="text"
+                            defaultValue={metric.associated_list}
+                            onChange={(event) => setCurrAssocList(event.target.value)}
+                        />
+                        ) : (
+                            metric.associated_list
+                        )}</td>
+                        <td>{inEditMode.status && inEditMode.rowKey === metric.id ? (
+                          <select
+                            className="form-select"
+                            aria-label="Default select example"
+                            onChange={(event) => setCurrType(event.target.value)}
+                            defaultValue={metric.type}
+                          >
+                            <option value="MET">Metric</option>
+                            <option value="CAT">Category</option>
+                            <option value="SUB">Submetric</option>
+                          </select>
+                        ) : (
+                          metric.type
+                        )}</td>
+                        <td>{inEditMode.status && inEditMode.rowKey === metric.id ? (
+                          <React.Fragment>
+                            <button className="btn btn-primary"
+                              onClick={() =>
+                                updateMetric({
+                                  id: metric.id,
+                                  currMetric: currMetric,
+                                  currAssocList: currAssocList,
+                                  currType: currType,
+                                })
+                              }
+                            >
+                              SAVE
+                            </button>
 
-        </table>
+                            <button className="btn btn-primary"
+                              style={{ marginLeft: 8 }}
+                              onClick={() => onCancel()}
+                            >
+                              CANCEL
+                            </button>
+                          </React.Fragment>
+                        ) : (
+                          <React.Fragment>
+                            <button className="btn btn-primary"
+                              onClick={() =>
+                                onEdit({
+                                  id: metric.id,
+                                  currMetric: metric.word,
+                                  currAssocList: metric.associated_list,
+                                  currType: metric.type,
+                                })
+                              }
+                            >
+                              EDIT
+                            </button>
+                            <button className="btn btn-primary" onClick={() =>
+                                    deleteMetric({id: metric.id})
+                                }>
+                                    DELETE
+                            </button>
+                          </React.Fragment>
+                        )}</td>
+                        </tr>
+                })}
+                </tbody>
+
+            </table>
+            <input defaultValue={newMetric} onChange={(event) => setNewMetric(event.target.value)}></input>
+            <button className="btn btn-primary mx-2" onClick={addMetric}> Add Metric </button>
         </div>
 
       );
