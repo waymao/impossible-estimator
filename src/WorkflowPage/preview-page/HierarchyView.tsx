@@ -2,7 +2,8 @@ import { ProcessedDataPoint, RawDataPoint } from "../datapoints";
 import { ProcessedDPTreeNode, sortProceessedDP } from "../processed-dp-tree";
 import { Collapse, Button } from 'react-bootstrap'
 import React from "react";
-import styles from './hierarchyview.module.css'
+import styles from './hierarchyview.module.css';
+import tbStyles from './table.module.css';
 
 export interface ViewProps {
     processed_data: ProcessedDataPoint[],
@@ -33,8 +34,8 @@ function HierarchyViewNode({node, cat_name, init_open, setPage, setCurrDP}: Node
     return (
     <div>
         {cat_name && 
-            <p className="mb-1" onClick={() => setOpen(!open)}>
-                <Button className={styles.switchBtn} variant="light">
+            <p className={"mb-1 " + tbStyles.tbRow} onClick={() => setOpen(!open)}>
+                <Button className="link-icon-button me-2" variant="link">
                     {open ? 
                         <i className="fa-solid fa-minus"></i>:
                         <i className="fa-solid fa-plus"></i>
@@ -51,11 +52,14 @@ function HierarchyViewNode({node, cat_name, init_open, setPage, setCurrDP}: Node
                     </div>
                 ))}
                 {node.dps.length > 0 && node.dps.map(dp => 
-                    <p className="mb-1 ms-3 d-flex align-items-center">
-                        <b>{dp.stat}</b>
+                    <p className={"mb-1 ms-3 px-1 d-flex align-items-center " + tbStyles.tbRow}>
+                        <span>{dp.stat}</span>
                         <small className="ms-auto me-2 text-secondary">Page {dp.page}</small>
-                        <Button variant="link" className="link-icon-button me-2" onClick={() => setDPForFocus(dp)}>
+                        <Button variant="link" className="link-icon-button" onClick={() => setDPForFocus(dp)}>
                             <i className="fa-solid fa-magnifying-glass"></i>
+                        </Button>
+                        <Button variant="link" className="link-icon-button me-2" onClick={() => setDPForFocus(dp)}>
+                            <i className="fa-solid fa-check"></i>
                         </Button>
                     </p>
                 )}
