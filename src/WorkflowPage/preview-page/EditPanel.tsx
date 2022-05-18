@@ -24,7 +24,8 @@ export default function EditPanel(props: Props) {
         processed_data, 
         raw_data, 
         candidate_data, 
-        reportUpdate, 
+        reportUpdate,
+        cancelUpdate, 
         file_id, 
         override
     } = props;
@@ -107,7 +108,7 @@ export default function EditPanel(props: Props) {
         </Form.Group>
         <Form.Group>
             <Button onClick={updateInfo} className="me-2">Update</Button>
-            <Button variant="secondary" onClick={updateInfo}>Cancel</Button>
+            <Button variant="secondary" onClick={cancelUpdate}>Cancel</Button>
         </Form.Group>
     </div>
 }
