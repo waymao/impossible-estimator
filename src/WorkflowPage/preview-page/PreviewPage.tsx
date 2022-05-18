@@ -27,7 +27,7 @@ export function PreviewPage() {
             setMode('processed');
             setSelectedData(null);
         }
-        setPage(Math.max(0, page));
+        setPage(Math.max(1, page));
     }
 
     useEffect(() => {

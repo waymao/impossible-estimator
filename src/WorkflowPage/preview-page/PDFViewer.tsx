@@ -64,16 +64,16 @@ export default function PDFViewer({url, page, boxes_to_draw, reportChangePage}: 
             const canvas = canvasRef.current;
             const container = containerRef.current;
             if (canvas && container) {
-                console.log("file width", page.getViewport({scale: 1}).width);
-                console.log("screen scale", screen_scale);
-                console.log("initial size", initial_container_dim)
+                // console.log("file width", page.getViewport({scale: 1}).width);
+                // console.log("screen scale", screen_scale);
+                // console.log("initial size", initial_container_dim)
                 const original_ratio_viewport = page.getViewport({scale: 1});
                 const outputScale = Math.min(
                     (initial_container_dim?.[0] ?? 100) / original_ratio_viewport.width,
                     (initial_container_dim?.[1] ?? 100) / original_ratio_viewport.height
                 ) * screen_scale * enlarge_ratio;
                 const viewport = page.getViewport({ scale: outputScale });
-                console.log("vp:", viewport.width, viewport.height, "; ratio:", outputScale)
+                // console.log("vp:", viewport.width, viewport.height, "; ratio:", outputScale)
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
                 canvas.style.height = viewport.height / screen_scale * enlarge_ratio + "px";

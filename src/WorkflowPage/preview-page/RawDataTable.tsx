@@ -33,7 +33,7 @@ function RawTableRow({data, setPage, setCurrentKeyword}: RowProps) {
                  : 
                 <></>
             }
-            <Button variant="link" className="link-icon-button" onClick={() => setPage(data.page + 1)}>
+            <Button variant="link" className="link-icon-button" onClick={() => setPage(data.page)}>
                 <i className="fa-solid fa-magnifying-glass"></i>
             </Button>
         </Col>
