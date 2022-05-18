@@ -15,7 +15,7 @@ function ProcessedTableRow({data, setPage, setCurrentKeyword}: RowProps) {
         <Col md="3" key="2" className="text-start">{data.stat}</Col>
         <Col md="2" key="3" sm="3" className="text-center">{data.page}</Col>
         <Col md="3" key="4" className="text-end">
-            <Button variant="link" className="link-icon-button" onClick={() => setPage(data.page + 1)}>
+            <Button variant="link" className="link-icon-button" onClick={() => setPage(data.page)}>
                 <i className="fa-solid fa-magnifying-glass"></i>
             </Button>
             <Button variant="link" className="link-icon-button"

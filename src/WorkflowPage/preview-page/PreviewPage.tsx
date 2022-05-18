@@ -183,10 +183,10 @@ export function PreviewPage() {
             className="mb-3"
         >
             <Tab eventKey="processed" title="Processed Data">
-                <ProcessedTable filter_page={page - 1} filename={file_info.name} data={data} setPage={changePage} setCurrentKeyword={enterEditModeFromTransform}/>
+                <ProcessedTable filter_page={page} filename={file_info.name} data={data} setPage={changePage} setCurrentKeyword={enterEditModeFromTransform}/>
             </Tab>
             <Tab eventKey="raw_all" title="Raw Data">
-                <RawDataTable filter_page={page - 1} filename={file_info.name} data={raw_data} setPage={changePage} setCurrentKeyword={enterEditMode}/>
+                <RawDataTable filter_page={page} filename={file_info.name} data={raw_data} setPage={changePage} setCurrentKeyword={enterEditMode}/>
             </Tab>
             <Tab eventKey="edit" title="Edit" disabled={(editing_node === null)}>
                 {editing_node !== null ? 
