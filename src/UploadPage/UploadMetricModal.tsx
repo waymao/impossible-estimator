@@ -2,13 +2,14 @@ import React, {useState, useEffect} from "react";
 import { API_HOST } from '../config';
 
 const EXTRACT_URL = API_HOST + '/extract';
-
+ 
 export default function UploadMetricModal() {
     const [inEditMode, setInEditMode] = useState({
         status: false,
         rowKey: -1,
       });
     const [metrics, setMetrics] = useState<any[]>([]);
+    const [categories, setCategories] = useState<any[]>([]);
     const [currMetric, setCurrMetric] = useState('');
     const [currAssocList, setCurrAssocList] = useState('');
     const [currType, setCurrType] = useState('');
@@ -21,11 +22,20 @@ export default function UploadMetricModal() {
             }
         }).then(res => res.json());
         setMetrics(metricsf);
-
+    }
+    const fetchCategories = async () => {
+      const categoriesf = await fetch(`${EXTRACT_URL}/categories`, {
+          method: 'GET',
+          headers: {
+              'Content-type': 'application/json; charset=UTF-8'
+          }
+      }).then(res => res.json());
+      setMetrics(categoriesf);
     }
 
     useEffect(() => {
         fetchMetrics();
+        fetchCategories();
     }, []);
 
     const onEdit = ({ id, currMetric, currAssocList, currType }:{id: number, currMetric: string, currAssocList: string, currType: string}) => {
@@ -102,53 +112,39 @@ export default function UploadMetricModal() {
           });
     }
 
-    return (metrics===[]) ? (
+    return (categories===[] || metrics===[]) ? (
     <div>Loading...</div>
     ) : (
         <div>
             <table className="table">
                 <thead className="header">
                     <tr>
+                        <th>Category</th>
                         <th>Metric</th>
                         <th>Associated Words</th>
-                        <th>Type</th>
-                        <th>Edit</th>
                     </tr>
                 </thead>
                 <tbody>
                 {metrics.map(metric => {
                     return <tr key={metric.id}>
+                        <td/>
                         <td>{inEditMode.status && inEditMode.rowKey === metric.id ? (
                         <input
                             type="text"
-                            defaultValue={metric.word}
+                            defaultValue={metric.name}
                             onChange={(event) => setCurrMetric(event.target.value)}
                         />
                         ) : (
-                            metric.word
+                            metric.name
                         )}</td>
                         <td>{inEditMode.status && inEditMode.rowKey === metric.id ? (
                         <input
                             type="text"
-                            defaultValue={metric.associated_list}
+                            defaultValue={metric.synonyms.join(', ')}
                             onChange={(event) => setCurrAssocList(event.target.value)}
                         />
                         ) : (
-                            metric.associated_list
-                        )}</td>
-                        <td>{inEditMode.status && inEditMode.rowKey === metric.id ? (
-                          <select
-                            className="form-select"
-                            aria-label="Default select example"
-                            onChange={(event) => setCurrType(event.target.value)}
-                            defaultValue={metric.type}
-                          >
-                            <option value="MET">Metric</option>
-                            <option value="CAT">Category</option>
-                            <option value="SUB">Submetric</option>
-                          </select>
-                        ) : (
-                          metric.type
+                            metric.synonyms.join(', ')
                         )}</td>
                         <td>{inEditMode.status && inEditMode.rowKey === metric.id ? (
                           <React.Fragment>
@@ -174,7 +170,7 @@ export default function UploadMetricModal() {
                           </React.Fragment>
                         ) : (
                           <React.Fragment>
-                            <button className="btn btn-primary"
+                            <button className="btn btn-primary" style={{marginRight: '1rem'}}
                               onClick={() =>
                                 onEdit({
                                   id: metric.id,

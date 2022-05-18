@@ -6,9 +6,12 @@ export interface ProcessedDataPoint {
     filename: number,
     page: number,
     content: string,
-    coord: [number, number, number, number]
+    category: string,
+    metric: string,
+    sub_metric: string,
+    coord: [number, number, number, number],
     stat: string,
-    ref_word?: number,
+    ref_sub?: number,
     ref_num?: number | null,
     stat_coord: [number, number, number, number]
 }
