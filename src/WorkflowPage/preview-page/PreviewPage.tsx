@@ -8,6 +8,7 @@ import { FileInfo, getFileInfo } from '../files';
 import ProcessedTable from './ProcessedTable';
 import RawDataTable from './RawDataTable';
 import EditPanel from './EditPanel';
+import HierarchyView from './HierarchyView';
 
 type Mode = 'raw_all' | 'edit' | 'processed';
 
@@ -177,11 +178,17 @@ export function PreviewPage() {
     return <div className={styles.previewPageBoard}>
         <div className={styles.ListPanel + "  col-4"}>
         <Tabs 
-            defaultActiveKey="profile" 
+            defaultActiveKey="tree" 
             activeKey={mode}
             onSelect={(k) => setMode(k as Mode)}
             className="mb-3"
         >
+            <Tab eventKey="tree" title="HierarchyView">
+                <HierarchyView 
+                    processed_data={data.processed_datas}
+                    file_id={file_info.id}
+                    setPage={setPage}/>
+            </Tab>
             <Tab eventKey="processed" title="Processed Data">
                 <ProcessedTable filter_page={page} filename={file_info.name} data={data} setPage={changePage} setCurrentKeyword={enterEditModeFromTransform}/>
             </Tab>
