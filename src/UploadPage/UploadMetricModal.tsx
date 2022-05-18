@@ -14,6 +14,7 @@ export default function UploadMetricModal() {
     const [currAssocList, setCurrAssocList] = useState('');
     const [currType, setCurrType] = useState('');
     const [newMetric, setNewMetric] = useState('');
+    const [catOptions, setCatOptions] = useState<any[]>([]);
     const fetchMetrics = async () => {
         const metricsf = await fetch(`${EXTRACT_URL}/metrics`, {
             method: 'GET',
@@ -30,7 +31,16 @@ export default function UploadMetricModal() {
               'Content-type': 'application/json; charset=UTF-8'
           }
       }).then(res => res.json());
-      setMetrics(categoriesf);
+      setCategories(categoriesf);
+      var categoryOptions = [];
+      categoryOptions.push(<option></option>);
+      categoriesf.forEach((cat: any) => {
+        categoryOptions.push(
+        <option key={cat.id} value={cat.id}>
+          {cat.name}
+        </option>);
+      });
+      setCatOptions(categoryOptions);
     }
 
     useEffect(() => {
@@ -61,13 +71,17 @@ export default function UploadMetricModal() {
     };
 
     const updateMetric = ({ id, currMetric, currAssocList, currType }:{id: number, currMetric: string, currAssocList: string, currType: string}) => {
-        const wordArray = currAssocList.split(',');
+        const updateArray: any[] = [];
+        const wordArray = currAssocList.split(', ');
+        wordArray.forEach((elem) => {
+          updateArray.push([elem]);
+        })
         fetch(`${EXTRACT_URL}/metrics/${id}`, {
           method: 'PATCH',
           body: JSON.stringify({
-            word: currMetric,
-            associated_list: currAssocList,
-            type: currType,
+            name: currMetric,
+            synonyms: updateArray,
+            category: currType,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -99,9 +113,9 @@ export default function UploadMetricModal() {
         fetch(`${EXTRACT_URL}/metrics`, {
             method: 'POST',
             body: JSON.stringify({
-                word: newMetric,
-                associated_list: [],
-                type: 'MET',
+                name: newMetric,
+                synonyms: [],
+                category: 1,
             }),
             headers: {
               'Content-type': 'application/json; charset=UTF-8',
@@ -112,9 +126,10 @@ export default function UploadMetricModal() {
           });
     }
 
-    return (categories===[] || metrics===[]) ? (
+    return (categories===[] && metrics===[]) ? (
     <div>Loading...</div>
     ) : (
+      
         <div>
             <table className="table">
                 <thead className="header">
@@ -127,7 +142,15 @@ export default function UploadMetricModal() {
                 <tbody>
                 {metrics.map(metric => {
                     return <tr key={metric.id}>
-                        <td/>
+                        <td>{inEditMode.status && inEditMode.rowKey === metric.id ? (
+                        <select name="category" 
+                                onChange={(event) => setCurrType(event.target.value)}
+                                defaultValue={metric.category}>
+                          {catOptions}
+                        </select>
+                        ) : (
+                            metric.category_name
+                        )}</td>
                         <td>{inEditMode.status && inEditMode.rowKey === metric.id ? (
                         <input
                             type="text"
@@ -174,9 +197,9 @@ export default function UploadMetricModal() {
                               onClick={() =>
                                 onEdit({
                                   id: metric.id,
-                                  currMetric: metric.word,
-                                  currAssocList: metric.associated_list,
-                                  currType: metric.type,
+                                  currMetric: metric.name,
+                                  currAssocList: metric.synonyms.join(', '),
+                                  currType: metric.category,
                                 })
                               }
                             >
