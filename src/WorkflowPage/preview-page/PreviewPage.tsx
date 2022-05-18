@@ -93,7 +93,7 @@ export function PreviewPage() {
                 })
             setData(new_data);
         }
-        setMode('processed');
+        if (mode === 'edit') setMode('processed');
     }
 
     const cancelDataUpdate = () => {
@@ -211,7 +211,8 @@ export function PreviewPage() {
                     processed_data={data.processed_datas}
                     file_id={file_info.id}
                     setPage={changePage}
-                    setCurrDP={setTreeDP}/>
+                    setCurrDP={setTreeDP}
+                    reportDataUpdate={reportDataUpdate}/>
             </Tab>
             <Tab eventKey="processed" title="Processed Data">
                 <ProcessedTable filter_page={page} filename={file_info.name} data={data} setPage={changePage} setCurrentKeyword={enterEditModeFromTransform}/>

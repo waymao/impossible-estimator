@@ -6,3 +6,9 @@
 .tbRow:hover{
     background-color: rgba(0,0,0,0.075);
 }
+
+
+.tbRow:focus, .tbRow:active{
+    background-color: rgba(0,0,0,0.085);
+}
+

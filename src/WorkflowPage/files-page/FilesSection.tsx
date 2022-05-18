@@ -9,7 +9,7 @@ function FileItem({info}: {info: FileInfo}) {
   return <div className={list_styles.oneFile}>
     <span className="me-2">{info.id}.</span>
     <span>{info.name}</span>
-    <Button variant="secodary" onClick={() => requestProcess(info.id)} className="ms-auto">
+    <Button variant="secodary" onClick={() => requestProcess(info.id).then(() => alert("processed!"))} className="ms-auto">
       Run Auto-search
     </Button>
     <Link to={"/process/analyze/" + info.id} className={styles.removeStyle + " ms-2 " + styles.icoButton}>

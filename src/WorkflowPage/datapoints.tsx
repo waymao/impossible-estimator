@@ -13,7 +13,8 @@ export interface ProcessedDataPoint {
     stat: string,
     ref_sub?: number,
     ref_num?: number | null,
-    stat_coord: [number, number, number, number]
+    stat_coord: [number, number, number, number],
+    is_validated: boolean
 }
 
 export interface ProcessedDPUpdateReq extends ProcessedDataPoint {
@@ -76,6 +77,23 @@ export async function newTransformedDataPoint(data_point: ProcessedDPUpdateReq):
             "Content-Type": "application/json"
         },
         body: JSON.stringify(data_point)
+    });
+    if (Math.floor(response.status / 100) === 2) {
+        return response.json();
+    } else {
+        throw new Error("Failed to create new data point.")
+    }
+}
+
+export async function changeValidationStatus(id: number, is_validated: boolean) {
+    const csrftoken = getCookieByName('csrftoken');
+    const response = await fetch(API_HOST + `/transform/data/${id}`, {
+        method: 'PATCH',
+        headers: {
+            "X-CSRFToken": csrftoken,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ is_validated })
     });
     if (Math.floor(response.status / 100) === 2) {
         return response.json();

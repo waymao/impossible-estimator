@@ -53,6 +53,7 @@ export default function EditPanel(props: Props) {
                     stat_coord: candidate_data.coord,
                     ref_sub: raw_data.id,
                     ref_num: candidate_data.id,
+                    is_validated: true,
                     override: override
                 }
                 const res = await newTransformedDataPoint(new_data);
@@ -69,6 +70,7 @@ export default function EditPanel(props: Props) {
                     stat: manual_data,
                     ref_sub: raw_data.id,
                     ref_num: null,
+                    is_validated: true,
                     stat_coord: [0, 0, 0, 0],
                     override: override
                 };
