@@ -11,9 +11,10 @@ interface RowProps {
 
 function ProcessedTableRow({data, setPage, setCurrentKeyword}: RowProps) {
     return <Row className={styles.tbRow}>
-        <Col md="4" key="1" className="text-start">{data.content}</Col>
-        <Col md="3" key="2" className="text-start">{data.stat}</Col>
-        <Col md="2" key="3" sm="3" className="text-center">{data.page}</Col>
+        <Col md="2" key="1.1" className="text-start">{data.category}</Col>
+        <Col md="2" key="1.2" className="text-start">{data.metric}</Col>
+        <Col md="3" key="1.3" className="text-start">{data.sub_metric}</Col>
+        <Col md="2" key="2" className="text-center">{data.stat}</Col>
         <Col md="3" key="4" className="text-end">
             <Button variant="link" className="link-icon-button" onClick={() => setPage(data.page)}>
                 <i className="fa-solid fa-magnifying-glass"></i>
@@ -42,9 +43,10 @@ export default function ProcessedTable({filename, data, filter_page, setPage, se
     return <><h5>{filename}</h5>
     <div className="overflow-auto px-2 text-center" style={{height: "75vh"}}>
         <Row className="text-center bg-secondary text-white">
-            <Col md="4">Keyword</Col>
-            <Col md="3">Data</Col>
-            <Col md="2">Page</Col>
+            <Col md="2">Category</Col>
+            <Col md="2">Metric</Col>
+            <Col md="3">Sub-Metric</Col>
+            <Col md="2">Data</Col>
             <Col md="3">Action</Col>
         </Row>
         {filtered_data.map(
