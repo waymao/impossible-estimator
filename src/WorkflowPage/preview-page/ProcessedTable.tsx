@@ -51,7 +51,7 @@ export default function ProcessedTable({filename, data, filter_page, setPage, se
             (data: ProcessedDataPoint) => 
                 <ProcessedTableRow 
                     data={data}
-                    key={`${data.ref_word}-stat-${data.ref_num}`}
+                    key={`${data.id}-stat-${data.ref_num}`}
                     setPage={setPage}
                     setCurrentKeyword={setCurrentKeyword}
                 />

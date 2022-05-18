@@ -44,14 +44,14 @@ export function PreviewPage() {
     const [editing_node, setEditingNode] = React.useState<RawDataPoint | null>(null);
     const [selected_data, setSelectedData] = React.useState<RawDataPoint | null>(null);
     const enterEditMode = (data: RawDataPoint) => {
-        setPage(data.page + 1);
+        setPage(data.page);
         setOverride(false);
         setEditingNode(data);
         setMode('edit');
         setSelectedData(null);
     };
     const enterEditModeFromTransform = (point: ProcessedDataPoint) => {
-        setPage(point.page + 1);
+        setPage(point.page);
         setOverride(true);
         const editing_node = raw_data?.raw_data?.find(item => item.id === point.ref_word);
         const selected_data = raw_data?.raw_data?.find(item => item.id === point.ref_num);
@@ -103,7 +103,7 @@ export function PreviewPage() {
         // returns processed data or raw data based on user selection
         if (mode === 'processed') {
             return data?.processed_datas
-                .filter(item => item.page + 1 === page)
+                .filter(item => item.page === page)
                 .flatMap(item => ([{
                     x1: item.coord[0],
                     y1: item.coord[1],
@@ -121,7 +121,7 @@ export function PreviewPage() {
                 }])) ?? [];
         } else if (mode === 'raw_all') {
             return raw_data?.raw_data
-                    .filter(item => item.page + 1 === page)
+                    .filter(item => item.page === page)
                     .map(item => ({
                         x1: item.coord[0],
                         y1: item.coord[1],
@@ -136,7 +136,7 @@ export function PreviewPage() {
         } else {
             if (!editing_node) return [];
             const arr = raw_data?.raw_data
-                .filter(item => item.page + 1 === page && item.type === 'NUM')
+                .filter(item => item.page === page && item.type === 'NUM')
                 .map(item => ({
                     x1: item.coord[0],
                     y1: item.coord[1],
