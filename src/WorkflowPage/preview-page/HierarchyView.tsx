@@ -50,7 +50,7 @@ function HierarchyViewNode({node, cat_name, init_open, setPage, setCurrDP, repor
     return (
     <div>
         {cat_name && 
-            <p className={"mb-1 " + tbStyles.tbRow} onClick={() => setOpen(!open)}>
+            <p className={"pb-1 mb-0 d-flex " + tbStyles.tbRow} onClick={() => setOpen(!open)}>
                 <Button className="link-icon-button me-2" variant="link">
                     {open ? 
                         <i className="fa-solid fa-minus"></i>:
@@ -58,6 +58,13 @@ function HierarchyViewNode({node, cat_name, init_open, setPage, setCurrDP, repor
                     }
                 </Button>
                 {cat_name}
+                {node.dps.length > 0 &&
+                    <small className="ms-auto me-2">
+                        {node.dps.find(
+                            dp => dp.is_validated == true
+                        )?.stat ?? <i>{"<unvalidated>"}</i>}
+                    </small>
+                }               
             </p>
         }
         <Collapse in={open}>
