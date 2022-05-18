@@ -8,6 +8,7 @@ const FILE_STATIC_PATH = "/uploads/"
 const FILE_INFO_PATH = "/file/all"
 const FILE_UPLOAD_PATH = API_HOST + "/file/upload"
 const TRANSFORM_PATH = "/transform/"
+const EXTRACT_PATH = "/extract/"
 // TODO changeme??
 
 export interface FileInfo {
@@ -173,7 +174,7 @@ export function downloadFileCSV(file_name: string, file_id: number) {
 
 export async function requestProcess(file_id: number) {
     console.log(file_id, "is ready to be processed");
-    const res = await fetch(`${API_HOST}${TRANSFORM_PATH}retrieve-csv/${file_id}`)
+    const res = await fetch(`${API_HOST}${EXTRACT_PATH}extract-file/${file_id}`)
     if (Math.floor(res.status / 100) !== 2) {
         throw new Error();
     }
