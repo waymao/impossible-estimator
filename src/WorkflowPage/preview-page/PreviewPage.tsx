@@ -10,7 +10,7 @@ import RawDataTable from './RawDataTable';
 import EditPanel from './EditPanel';
 import HierarchyView from './HierarchyView';
 
-type Mode = 'raw_all' | 'edit' | 'processed';
+type Mode = 'raw_all' | 'edit' | 'processed' | "tree";
 
 export function PreviewPage() {
     const file_id = useParams().file_id;
@@ -27,6 +27,8 @@ export function PreviewPage() {
         if (mode === 'edit') {
             setMode('processed');
             setSelectedData(null);
+        } else if (mode === 'tree') {
+            setTreeDP(undefined);
         }
         setPage(Math.max(1, page));
     }
@@ -99,10 +101,31 @@ export function PreviewPage() {
         setSelectedData(null);
     }
 
-
+    const [ curr_tree_dp, setTreeDP ] = React.useState<ProcessedDataPoint>();
     const boxes_data: BoxToDraw[] = React.useMemo(() => {
         // returns processed data or raw data based on user selection
-        if (mode === 'processed') {
+        if (mode === "tree") {
+            if (!curr_tree_dp) {
+                return [];
+            }
+            return [
+                {
+                    x1: curr_tree_dp.coord[0],
+                    y1: curr_tree_dp.coord[1],
+                    x2: curr_tree_dp.coord[2],
+                    y2: curr_tree_dp.coord[3], 
+                    color: 'black',
+                    id: `processed-keyword-${curr_tree_dp.id}`
+                }, {
+                    x1: curr_tree_dp.stat_coord[0],
+                    y1: curr_tree_dp.stat_coord[1],
+                    x2: curr_tree_dp.stat_coord[2],
+                    y2: curr_tree_dp.stat_coord[3], 
+                    color: 'red',
+                    id: `processed-stat-${curr_tree_dp.id}`
+                }
+            ]; 
+        } else if (mode === 'processed') {
             return data?.processed_datas
                 .filter(item => item.page === page)
                 .flatMap(item => ([{
@@ -159,7 +182,7 @@ export function PreviewPage() {
             })
             return arr ?? [];
         }
-    }, [data, raw_data, selected_data, mode, page]);
+    }, [data, raw_data, selected_data, mode, page, curr_tree_dp]);
 
     if (file_id === undefined) {
         return <div>
@@ -187,7 +210,8 @@ export function PreviewPage() {
                 <HierarchyView 
                     processed_data={data.processed_datas}
                     file_id={file_info.id}
-                    setPage={setPage}/>
+                    setPage={changePage}
+                    setCurrDP={setTreeDP}/>
             </Tab>
             <Tab eventKey="processed" title="Processed Data">
                 <ProcessedTable filter_page={page} filename={file_info.name} data={data} setPage={changePage} setCurrentKeyword={enterEditModeFromTransform}/>
