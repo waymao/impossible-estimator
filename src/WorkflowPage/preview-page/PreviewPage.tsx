@@ -53,7 +53,7 @@ export function PreviewPage() {
     const enterEditModeFromTransform = (point: ProcessedDataPoint) => {
         setPage(point.page + 1);
         setOverride(true);
-        const editing_node = raw_data?.raw_data?.find(item => item.id === point.ref_word);
+        const editing_node = raw_data?.raw_data?.find(item => item.id === point.ref_sub);
         const selected_data = raw_data?.raw_data?.find(item => item.id === point.ref_num);
         if (editing_node) {
             setEditingNode(editing_node);

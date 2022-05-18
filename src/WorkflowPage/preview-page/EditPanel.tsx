@@ -45,10 +45,13 @@ export default function EditPanel(props: Props) {
                     filename: file_id,
                     page: raw_data.page,
                     content: raw_data.content,
+                    category: '',
+                    metric: '',
+                    sub_metric: '',
                     coord: raw_data.coord,
                     stat: candidate_data.content,
                     stat_coord: candidate_data.coord,
-                    ref_word: raw_data.id,
+                    ref_sub: raw_data.id,
                     ref_num: candidate_data.id,
                     override: override
                 }
@@ -59,9 +62,12 @@ export default function EditPanel(props: Props) {
                     filename: file_id,
                     page: raw_data.page,
                     content: raw_data.content,
+                    category: '',
+                    metric: '',
+                    sub_metric: '',
                     coord: raw_data.coord,
                     stat: manual_data,
-                    ref_word: raw_data.id,
+                    ref_sub: raw_data.id,
                     ref_num: null,
                     stat_coord: [0, 0, 0, 0],
                     override: override
