@@ -20,12 +20,16 @@ export function UploadPage() {
                     -- it should be easy.
                 </p>
             </div>
-
-            <div className="col justify-content-md-end gap-2 d-md-flex">
-                <button id={styles.button} type="button" className="container btn btn-primary fw-bold text-white fs-3 lh-1 my-5 w-50 me-md-2 " onClick={handleShow}> Metric List </button>
-
-            </div>
-
+        </div>
+        <div className="col justify-content-md-end gap-2 d-md-flex flex-grow-0">
+            <button 
+              id={styles.button} 
+              type="button" 
+              className="container btn btn-primary fw-bold text-white fs-3 mb-2" 
+              onClick={handleShow}
+            > 
+              Edit Metric List 
+            </button>
         </div>
         <Modal size="lg" show={show} onHide={handleClose}>
         <Modal.Header closeButton>

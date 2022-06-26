@@ -17,7 +17,7 @@ export function PreviewPage() {
     const [file_info, setFileInfo] = React.useState<FileInfo | null>();
     const [data, setData] = React.useState<TransformResult>();
     const [raw_data, setRawData] = React.useState<ExtractResult>();
-    const [mode, setMode] = React.useState<Mode>('processed');
+    const [mode, setMode] = React.useState<Mode>('tree');
     const [page, setPage] = React.useState<number>(1);
     const [override, setOverride] = React.useState<boolean>(false);
     
@@ -206,7 +206,7 @@ export function PreviewPage() {
             onSelect={(k) => setMode(k as Mode)}
             className="mb-3"
         >
-            <Tab eventKey="tree" title="HierarchyView">
+            <Tab eventKey="tree" title="Tree View">
                 <HierarchyView 
                     processed_data={data.processed_datas}
                     file_id={file_info.id}

@@ -50,7 +50,7 @@ function HierarchyViewNode({node, cat_name, init_open, setPage, setCurrDP, repor
     return (
     <div>
         {cat_name && 
-            <p className={"pb-1 mb-0 d-flex " + tbStyles.tbRow} onClick={() => setOpen(!open)}>
+            <p className={"mb-1 d-flex " + tbStyles.tbRow} onClick={() => setOpen(!open)}>
                 <Button className="link-icon-button me-2" variant="link">
                     {open ? 
                         <i className="fa-solid fa-minus"></i>:
