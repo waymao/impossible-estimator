@@ -44,8 +44,6 @@ export function EditModal({ dp, setDp, setEditingNode, hierarchy_info, reportDat
         setEditingNode();
     };
 
-    console.log("in???", (category ?? "") in category_info);
-
     return <Modal show={show} centered onHide={() => setEditingNode()} onExited={() => setDp()}>
         <Modal.Header closeButton>
             <Modal.Title>Change Data Category</Modal.Title>
@@ -66,10 +64,11 @@ export function EditModal({ dp, setDp, setEditingNode, hierarchy_info, reportDat
                         setCategory(e.target.value);
                         setSubMetric(undefined);
                         setMetric(undefined);
-                    }}>
-                    <option key="empty" selected={(category ?? "") in category_info}> --- </option>
+                    }}
+                    defaultValue={category}>
+                    <option key="empty"> --- </option>
                     {Object.keys(category_info).map(key => 
-                        <option key={key} value={key} selected={category === key}>{key}</option>
+                        <option key={key} value={key}>{key}</option>
                     )}
                 </Form.Select>
                 }
@@ -77,18 +76,15 @@ export function EditModal({ dp, setDp, setEditingNode, hierarchy_info, reportDat
             <Form.Group className="mb-3">
                 <Form.Label>Metric: </Form.Label>
                 {dp && category_info &&
-                <Form.Select onChange={(e) => setMetric(e.target.value)}>
-                    <option selected={
-                        !((category ?? "") in category_info) || 
-                        !((category ?? "") in metric_info) ||
-                        !((metric ?? "") in metric_info[category ?? ""])}
+                <Form.Select onChange={(e) => setMetric(e.target.value)} defaultValue={metric}>
+                    <option
                         value=""
                         key="empty"
                     >
                             --- 
                     </option>
                     {category && category in metric_info && metric_info[category].map(key => 
-                        <option key={key} value={key} selected={metric === key}>{key}</option>
+                        <option key={key} value={key}>{key}</option>
                     )}
                 </Form.Select>
                 }
@@ -96,17 +92,15 @@ export function EditModal({ dp, setDp, setEditingNode, hierarchy_info, reportDat
             <Form.Group className="mb-3">
                 <Form.Label>Sub-Metric: </Form.Label>
                 {dp && category_info &&
-                <Form.Select onChange={(e) => setSubMetric(e.target.value)}>
-                    <option selected={
-                        !((category ?? "") in category_info) || 
-                        !((sub_metric ?? "") in category_info[category ?? ""])}
+                <Form.Select onChange={(e) => setSubMetric(e.target.value)}  defaultValue={sub_metric}>
+                    <option 
                         value=""
                         key="empty"
                     >
                             --- 
                     </option>
                     {category && category in category_info && category_info[category].map(key => 
-                        <option key={key} value={key} selected={sub_metric === key}>{key}</option>
+                        <option key={key} value={key}>{key}</option>
                     )}
                 </Form.Select>
                 }
