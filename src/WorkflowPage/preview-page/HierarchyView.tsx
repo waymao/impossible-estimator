@@ -61,7 +61,7 @@ function HierarchyViewNode({node, cat_name, init_open, setPage, setCurrDP, repor
                 {node.dps.length > 0 &&
                     <small className="ms-auto me-2">
                         {node.dps.find(
-                            dp => dp.is_validated == true
+                            dp => dp.is_validated === true
                         )?.stat ?? <i>{"<unvalidated>"}</i>}
                     </small>
                 }               
