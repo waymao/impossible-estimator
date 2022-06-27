@@ -2,6 +2,7 @@ import styles from './upload-page.module.css';
 import UploadPageNav from './UploadPageNav';
 import UploadSection from './UploadSection';
 import UploadMetricModal from './UploadMetricModal';
+import CustomizationModal from './CustomizationModal';
 import {useState} from 'react';
 import { Button, Modal } from 'react-bootstrap';
 
@@ -28,14 +29,15 @@ export function UploadPage() {
               className="container btn btn-primary fw-bold text-white fs-3 mb-2" 
               onClick={handleShow}
             > 
-              Edit Metric List 
+              Edit Category/Metric
             </button>
         </div>
-        <Modal size="lg" show={show} onHide={handleClose}>
+        <Modal size="lg" show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Metric List</Modal.Title>
+          <Modal.Title>Edit Category</Modal.Title>
         </Modal.Header>
-        <Modal.Body><UploadMetricModal></UploadMetricModal></Modal.Body>
+        {/* <Modal.Body><UploadMetricModal></UploadMetricModal></Modal.Body> */}
+        <Modal.Body><CustomizationModal></CustomizationModal></Modal.Body>
         <Modal.Footer>
           <Button variant="primary" onClick={handleClose}>
             Close
