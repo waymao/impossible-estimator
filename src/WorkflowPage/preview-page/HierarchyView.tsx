@@ -1,9 +1,11 @@
 import { changeValidationStatus, ProcessedDataPoint, RawDataPoint, UpdateDPResult } from "../datapoints";
 import { ProcessedDPTreeNode, sortProceessedDP } from "../processed-dp-tree";
 import { Collapse, Button } from 'react-bootstrap'
-import React from "react";
+import React, { useEffect } from "react";
 import styles from './hierarchyview.module.css';
 import tbStyles from './table.module.css';
+import { getCategoryHierarchy, HierarchyInfo } from "./category";
+import { EditModal } from './HierarchyViewEditModal';
 
 export interface ViewProps {
     processed_data: ProcessedDataPoint[],
@@ -21,10 +23,20 @@ interface NodeProps {
     init_open?: boolean,
     setPage: (page: number) => void,
     setCurrDP: (dp: ProcessedDataPoint) => void,
-    reportDataUpdate: (dp: UpdateDPResult) => void
+    reportDataUpdate: (dp: UpdateDPResult) => void,
+    setEditingModalNode: (dp: ProcessedDataPoint) => void,
 }
 
-function HierarchyViewNode({node, cat_name, init_open, setPage, setCurrDP, reportDataUpdate}: NodeProps) {
+function HierarchyViewNode(props: NodeProps) {
+    const {
+        node, 
+        cat_name, 
+        init_open, 
+        setPage, 
+        setCurrDP, 
+        reportDataUpdate, 
+        setEditingModalNode
+    } = props;
     const [open, setOpen] = React.useState(false);
     React.useEffect(() => {
         setOpen(init_open ?? false);
@@ -71,14 +83,24 @@ function HierarchyViewNode({node, cat_name, init_open, setPage, setCurrDP, repor
             <div>
                 {node.children.size > 0 && Array.from(node.children).map(([key, child_node]) => (
                     <div className="ms-3" key={key}>
-                        <HierarchyViewNode cat_name={key} node={child_node} key={key} setPage={setPage} setCurrDP={setCurrDP} reportDataUpdate={reportDataUpdate}/>
+                        <HierarchyViewNode 
+                            cat_name={key} 
+                            node={child_node} 
+                            key={key} 
+                            setPage={setPage} 
+                            setCurrDP={setCurrDP} 
+                            setEditingModalNode={setEditingModalNode}
+                            reportDataUpdate={reportDataUpdate}/>
                     </div>
                 ))}
-                {node.dps.length > 0 && node.dps.map(dp => 
-                    <p className={"mb-1 ms-3 px-1 d-flex align-items-center " + tbStyles.tbRow}>
+                {node.dps.length > 0 && node.dps.map((dp, idx) => 
+                    <p className={"mb-1 ms-3 px-1 d-flex align-items-center " + tbStyles.tbRow} key={idx}>
                         <span className={dp.is_validated ? "fw-bold" : ""}>{dp.stat}</span>
                         {dp.is_validated && <i className="fa-solid fa-circle-check ms-1"></i>}
                         <small className="ms-auto me-2 text-secondary">Page {dp.page}</small>
+                        <Button variant="link" className="link-icon-button" onClick={() => setEditingModalNode(dp)}>
+                            <i className="fa-solid fa-pen"></i>
+                        </Button>
                         <Button variant="link" className="link-icon-button" onClick={() => setDPForFocus(dp)}>
                             <i className="fa-solid fa-magnifying-glass"></i>
                         </Button>
@@ -98,8 +120,32 @@ function HierarchyViewNode({node, cat_name, init_open, setPage, setCurrDP, repor
 
 export default function HierarchyView(props: ViewProps) {
     const { processed_data, setPage, setCurrDP, reportDataUpdate } = props;
+    const [ edit_node, setEditingNode ] = React.useState<ProcessedDataPoint>();
+    const [ category_info, setCategoryInfo ] = React.useState<HierarchyInfo>();
     const data_tree = sortProceessedDP(processed_data);
-    return <div className="overflow-auto" style={{height: "75vh"}}>
-        <HierarchyViewNode node={data_tree} init_open={true} setPage={setPage} setCurrDP={setCurrDP} reportDataUpdate={reportDataUpdate}/>
+
+    useEffect(() => {
+        getCategoryHierarchy().then(setCategoryInfo);
+    }, []);
+
+    console.log(category_info)
+    return !category_info ? <></> :
+    <div className="overflow-auto" style={{height: "75vh"}}>
+        <HierarchyViewNode 
+            node={data_tree} 
+            init_open={true} 
+            setPage={setPage} 
+            setCurrDP={setCurrDP} 
+            reportDataUpdate={reportDataUpdate}
+            setEditingModalNode={setEditingNode}/>
+        {edit_node &&
+            <EditModal 
+                dp={edit_node}
+                setDp={setEditingNode}
+                setEditingNode={setEditingNode} 
+                hierarchy_info={category_info} 
+                reportDataUpdate={reportDataUpdate}/>
+        }
     </div>;
 }
+
