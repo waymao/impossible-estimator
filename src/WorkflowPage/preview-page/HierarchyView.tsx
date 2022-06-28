@@ -128,7 +128,6 @@ export default function HierarchyView(props: ViewProps) {
         getCategoryHierarchy().then(setCategoryInfo);
     }, []);
 
-    console.log(category_info)
     return !category_info ? <></> :
     <div className="overflow-auto" style={{height: "75vh"}}>
         <HierarchyViewNode 

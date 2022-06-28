@@ -21,10 +21,10 @@ function ProcessedTableRow({data, setPage, setCurrentKeyword}: RowProps) {
             <Button variant="link" className="link-icon-button" onClick={() => setPage(data.page)}>
                 <i className="fa-solid fa-magnifying-glass"></i>
             </Button>
-            {/* <Button variant="link" className="link-icon-button"
+            <Button variant="link" className="link-icon-button"
                 onClick={() => setCurrentKeyword(data)}>
                 <i className="fa-solid fa-pen"></i>
-            </Button> */}
+            </Button>
         </Col>
     </Row>;
     }
@@ -37,10 +37,10 @@ function ProcessedTableRow({data, setPage, setCurrentKeyword}: RowProps) {
             <Button variant="link" className="link-icon-button" onClick={() => setPage(data.page)}>
                 <i className="fa-solid fa-magnifying-glass"></i>
             </Button>
-            {/* <Button variant="link" className="link-icon-button"
+            <Button variant="link" className="link-icon-button"
                 onClick={() => setCurrentKeyword(data)}>
                 <i className="fa-solid fa-pen"></i>
-            </Button> */}
+            </Button>
         </Col>
     </Row>;
     
