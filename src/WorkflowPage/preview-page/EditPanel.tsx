@@ -41,14 +41,15 @@ export default function EditPanel(props: Props) {
 
     const updateInfo = async () => {
         try {
-            if (candidate_data && manual_data === "") {
+            console.log(processed_data);
+            if (candidate_data && (manual_data === "" || manual_data == candidate_data.content)) {
                 const new_data: ProcessedDPUpdateReq = {
                     filename: file_id,
                     page: raw_data.page,
                     content: raw_data.content,
-                    category: processed_data!.category,
-                    metric: processed_data!.metric,
-                    sub_metric: processed_data!.sub_metric,
+                    category: processed_data?.category ?? "",
+                    metric: processed_data?.metric ?? "",
+                    sub_metric: processed_data?.sub_metric ?? "",
                     coord: raw_data.coord,
                     stat: candidate_data.content,
                     stat_coord: candidate_data.coord,
@@ -57,6 +58,7 @@ export default function EditPanel(props: Props) {
                     is_validated: true,
                     override: override
                 }
+                console.log(new_data);
                 const res = await newTransformedDataPoint(new_data);
                 if (reportUpdate) reportUpdate(res);
             } else {
@@ -64,9 +66,9 @@ export default function EditPanel(props: Props) {
                     filename: file_id,
                     page: raw_data.page,
                     content: raw_data.content,
-                    category: "",
-                    metric: "",
-                    sub_metric: "",
+                    category: processed_data?.category ?? "",
+                    metric: processed_data?.metric ?? "",
+                    sub_metric: processed_data?.sub_metric ?? "",
                     coord: raw_data.coord,
                     stat: manual_data,
                     ref_sub: raw_data.id,
@@ -75,6 +77,7 @@ export default function EditPanel(props: Props) {
                     stat_coord: [0, 0, 0, 0],
                     override: override
                 };
+                console.log(new_data);
                 const res = await newTransformedDataPoint(new_data);
                 if (reportUpdate) reportUpdate(res);
             }

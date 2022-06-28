@@ -1,5 +1,5 @@
 import styles from './PreviewPage.module.css';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import PDFViewer, { BoxToDraw } from './PDFViewer';
 import { ExtractResult, getTransformedDataPoint, ProcessedDataPoint, UpdateDPResult, TransformResult, getExtractedDataPoint, RawDataPoint } from '../datapoints';
 import { useParams } from 'react-router';
@@ -46,6 +46,7 @@ export function PreviewPage() {
      */
     const [editing_node, setEditingNode] = React.useState<RawDataPoint | null>(null);
     const [selected_data, setSelectedData] = React.useState<RawDataPoint | null>(null);
+    const [editing_processed_node, setEditingProcessedNode] = React.useState<ProcessedDataPoint>();
     const enterEditMode = (data: RawDataPoint) => {
         setPage(data.page);
         setOverride(false);
@@ -62,6 +63,7 @@ export function PreviewPage() {
             setEditingNode(editing_node);
             setMode('edit');
             setSelectedData(selected_data ?? null);
+            setEditingProcessedNode(point);
         }
     };
 
@@ -102,6 +104,7 @@ export function PreviewPage() {
     }
 
     const [ curr_tree_dp, setTreeDP ] = React.useState<ProcessedDataPoint>();
+    const [ curr_processed_hl_dp, setProcessedHLDP ] = React.useState<ProcessedDataPoint>();
     const boxes_data: BoxToDraw[] = React.useMemo(() => {
         // returns processed data or raw data based on user selection
         if (mode === "tree") {
@@ -126,6 +129,25 @@ export function PreviewPage() {
                 }
             ]; 
         } else if (mode === 'processed') {
+            if (!!curr_processed_hl_dp) {
+                return [
+                    {
+                        x1: curr_processed_hl_dp.coord[0],
+                        y1: curr_processed_hl_dp.coord[1],
+                        x2: curr_processed_hl_dp.coord[2],
+                        y2: curr_processed_hl_dp.coord[3], 
+                        color: 'black',
+                        id: `processed-keyword-${curr_processed_hl_dp.id}`
+                    }, {
+                        x1: curr_processed_hl_dp.stat_coord[0],
+                        y1: curr_processed_hl_dp.stat_coord[1],
+                        x2: curr_processed_hl_dp.stat_coord[2],
+                        y2: curr_processed_hl_dp.stat_coord[3], 
+                        color: 'red',
+                        id: `processed-stat-${curr_processed_hl_dp.id}`
+                    }
+                ];
+            }
             return data?.processed_datas
                 .filter(item => item.page === page)
                 .flatMap(item => ([{
@@ -182,7 +204,7 @@ export function PreviewPage() {
             })
             return arr ?? [];
         }
-    }, [data, raw_data, selected_data, mode, page, curr_tree_dp]);
+    }, [data, raw_data, selected_data, mode, page, editing_node, curr_tree_dp, curr_processed_hl_dp]);
 
     if (file_id === undefined) {
         return <div>
@@ -215,7 +237,13 @@ export function PreviewPage() {
                     reportDataUpdate={reportDataUpdate}/>
             </Tab>
             <Tab eventKey="processed" title="Processed Data">
-                <ProcessedTable filter_page={page} filename={file_info.name} data={data} setPage={changePage} setCurrentKeyword={enterEditModeFromTransform}/>
+                <ProcessedTable 
+                    filter_page={page} 
+                    filename={file_info.name} 
+                    data={data} 
+                    setPage={changePage} 
+                    setCurrHighlightDP={setProcessedHLDP}
+                    setEditKeyword={enterEditModeFromTransform}/>
             </Tab>
             <Tab eventKey="raw_all" title="Raw Data">
                 <RawDataTable filter_page={page} filename={file_info.name} data={raw_data} setPage={changePage} setCurrentKeyword={enterEditMode}/>
@@ -224,7 +252,7 @@ export function PreviewPage() {
                 {editing_node !== null ? 
                     <EditPanel 
                         file_id={data.id}
-                        processed_data={undefined} 
+                        processed_data={editing_processed_node} 
                         raw_data={editing_node} 
                         candidate_data={selected_data || undefined}
                         reportUpdate={reportDataUpdate}
