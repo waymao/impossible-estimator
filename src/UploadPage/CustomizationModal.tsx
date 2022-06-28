@@ -166,7 +166,7 @@ export default function CustomizationModal() {
         setCurrCategoryKws(rest);
       }
       const temp = currCategoryKws;
-      temp[currKey] = stringToSyns(currKWs);
+      temp[currKey] = stringToSyns(currKWs.toLowerCase());
       setCurrCategoryKws(temp);
     }
     updateCurrCategory();
