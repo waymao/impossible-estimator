@@ -1,46 +1,40 @@
-# Getting Started with Create React App
+# ESG Fund analysis, Front end.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Installing and Running
+Firstly, make sure `node.js` is installed.
 
-## Available Scripts
+Make sure yarnpkg is installed in the system by running `npm install -g yarn`.
 
-In the project directory, you can run:
+Now, install the dependencies by running `yarn install`
 
-### `yarn start`
+Once that's done, you can run the server by running `yarn start`. A development
+server will start running and will be listening at `localhost:3000`.
+A browser window will normally automatically pop up in your system.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+To export a production-ready version of the code, run yarn build. the build,
+which is static HTML files,
+is ready to be hosted by a web server like nginx.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `yarn test`
+### Usage
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+0. (Optional) Metric Customization: If needed, click the Edit Metric/Category button and adjust the desired Categories, Metric and Submetrics.
 
-### `yarn build`
+1. Upload: Drag and Drop files into the upload window. Click Continue.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. Extraction: Run 'Auto-Validate' on all the files that the user wants to extract information, then click Validate on the pdf.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. Validation: The Tree View has conveniently grouped all the transformed data points to their respective Categories, Metrics, and Submetrics, and expanding them will allow the user to view all the potential datapoints. 
+   - The pencil icon allows editing of the correct categorization of the datapoint
+   - The magnifying glass allows the page to jump to the highlighted datapoint
+   - The checkmark allows the user to mark this datapoint as Validated
+   
+   The Processed Data tab has the entire list of transformed data points for the specific page of the pdf that have been associated by the algorithm with keywords defined in the metrics list. Scrolling through the pages of the pdf gives the list of Processed Data for each page.
+   - The magnifying glass allows the pdf viewer to jump to the specific datapoint
+   - The pencil icon transforms the pdf to edit view, where the black highlight is the keyword, the red highlight is the statistic, and all the other blue highlights are clickable statistics that the user can click to replace the statistic associated with that specific datapoint in case the algorithm detected the wrong number. Alternatively, the user can also manually type in a number in case the algorithm did not detect the number for whatever reason. 
+   
+   The Raw Data tab has the entire list of raw data points for the specific page of the pdf, split between potential keywords and numbers. This is a reference list in case the user wants to debug the algorithm.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   Once the user is satisfied with the datapoints, they can then click the 'Download' button on the top of the page. If multiple files were uploaded, they can click the 'Files' button to return to the files list and pick another file to analyze.
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+4. Download: In the files list, click 'Download' on the file that has been properly analyzed. Note that if a file does not have any datapoints Validated, the resulting csv will be empty. A file will be automatically downloaded to the local device.
